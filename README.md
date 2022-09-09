@@ -58,7 +58,7 @@ this is some info
 converts to
 
 ```html
-<div class="fenced">this is some info</div>
+<div class="fenced ">this is some info</div>
 ```
 
 **Or with a custom class.**

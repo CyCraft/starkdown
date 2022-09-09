@@ -222,7 +222,7 @@ describe('starkdown()', () => {
 
   describe('fenced divs (notes)', () => {
     it('parses three colons (:::) as fenced divs', () => {
-      expect(starkdown(':::\ninfo\n:::')).toEqual('<div class="fenced">info</div>')
+      expect(starkdown(':::\ninfo\n:::')).toEqual('<div class="fenced ">info</div>')
     })
     it('fenced div with custom class', () => {
       expect(starkdown('::: info\ninfo\n:::')).toEqual('<div class="fenced info">info</div>')
