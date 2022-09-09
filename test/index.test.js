@@ -70,6 +70,12 @@ describe('text formatting', () => {
   it('parses strikethrough with ~~', () => {
     expect(starkdown('I ~~like~~ tiny libraries')).toEqual('<p>I <s>like</s> tiny libraries</p>')
   })
+
+  it('parses mixes', () => {
+    expect(starkdown('_This_ is **easy** to `use`.')).toEqual(
+      '<p><em>This</em> is <strong>easy</strong> to <code>use</code>.</p>'
+    )
+  })
 })
 
 describe('titles', () => {
@@ -113,25 +119,25 @@ describe('titles', () => {
 describe('links & images', () => {
   it('parses links', () => {
     expect(starkdown('[starkdown](http://github.com/developit/starkdown)')).toEqual(
-      '<a href="http://github.com/developit/starkdown">starkdown</a>'
+      '<p><a href="http://github.com/developit/starkdown">starkdown</a></p>'
     )
   })
 
   it('parses anchor links', () => {
-    expect(starkdown('[Example](#example)')).toEqual('<a href="#example">Example</a>')
+    expect(starkdown('[Example](#example)')).toEqual('<p><a href="#example">Example</a></p>')
   })
 
   it('parses images', () => {
-    expect(starkdown('![title](foo.png)')).toEqual('<img src="foo.png" alt="title">')
-    expect(starkdown('![](foo.png)')).toEqual('<img src="foo.png" alt="">')
+    expect(starkdown('![title](foo.png)')).toEqual('<p><img src="foo.png" alt="title"></p>')
+    expect(starkdown('![](foo.png)')).toEqual('<p><img src="foo.png" alt=""></p>')
   })
 
   it('parses images within links', () => {
     expect(starkdown('[![](toc.png)](#toc)')).toEqual(
-      '<a href="#toc"><img src="toc.png" alt=""></a>'
+      '<p><a href="#toc"><img src="toc.png" alt=""></a></p>'
     )
     expect(starkdown('[![a](a.png)](#a) [![b](b.png)](#b)')).toEqual(
-      '<a href="#a"><img src="a.png" alt="a"></a> <a href="#b"><img src="b.png" alt="b"></a>'
+      '<p><a href="#a"><img src="a.png" alt="a"></a> <a href="#b"><img src="b.png" alt="b"></a></p>'
     )
   })
 
@@ -249,10 +255,10 @@ describe('horizontal rules', () => {
 
 describe('edge cases', () => {
   it('should close unclosed tags', () => {
-    expect(starkdown('*foo')).toEqual('<em><p>foo</p></em>')
+    expect(starkdown('*foo')).toEqual('<p><em>foo</em></p>')
     expect(starkdown('foo**')).toEqual('<p>foo<strong></strong></p>')
     expect(starkdown('[some **bold text](#winning)')).toEqual(
-      '<a href="#winning">some <strong>bold text</strong></a>'
+      '<p><a href="#winning">some <strong>bold text</strong></a></p>'
     )
     expect(starkdown('`foo')).toEqual('<p>`foo</p>')
   })
@@ -319,15 +325,21 @@ describe('fenced divs (notes)', () => {
 
 describe('html', () => {
   it('should not parse inside tags', () => {
-    expect(starkdown('<div title="I **don\'t** parse"></div>')).to.equal(
+    expect(starkdown('<div title="I **don\'t** parse"></div>')).toEqual(
       '<div title="I **don\'t** parse"></div>'
     )
-    expect(starkdown('<a class="_b" target="_blank">a</a>')).to.equal(
-      '<a class="_b" target="_blank">a</a>'
+    expect(starkdown('hello\n<div title="I **don\'t** parse"></div>')).toEqual(
+      '<p>hello</p><div title="I **don\'t** parse"></div>'
+    )
+    expect(starkdown('hello\n<div title="I **don\'t** parse"></div>\nhello\n')).toEqual(
+      '<p>hello</p><div title="I **don\'t** parse"></div><p>hello</p>'
+    )
+    expect(starkdown('<a class="_b" target="_blank">a</a>')).toEqual(
+      '<p><a class="_b" target="_blank">a</a></p>'
     )
   })
 
   it('should parse outside HTML tags', () => {
-    expect(starkdown('<a>**a**</a>')).to.equal('<a><strong>a</strong></a>')
+    expect(starkdown('<a>**a**</a>')).toEqual('<p><a><strong>a</strong></a></p>')
   })
 })

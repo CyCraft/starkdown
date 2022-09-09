@@ -7,6 +7,13 @@ const TAGS = {
   '-': ['<hr />'],
 }
 
+function isInline(tag: string): boolean {
+  const tagName = tag.replace(/^<\/?([a-z]+)[> /].*/, '$1')
+  return /^(?:a|abbr|acronym|audio|b|bdi|bdo|big|br|button|canvas|cite|code|data|datalist|del|dfn|em|embed|i|iframe|img|input|ins|kbd|label|map|mark|meter|noscript|object|output|picture|progress|q|ruby|s|samp|script|select|slot|small|span|strong|sub|sup|svg|template|textarea|time|u|tt|var|video|wbr)$/.test(
+    tagName
+  )
+}
+
 /** Outdent a string based on the first indented line's leading whitespace
  *	@private
  */
@@ -27,11 +34,12 @@ function parse(md: string, options?: { links?: Record<string, string>; paragraph
 
   const tokenizer =
     /((?:^|\n*)(?:\n?---+|\* \*(?: \*)+)\n*)|(?:^``` *(\w*)\n([\s\S]*?)\n```$)|((?:(?:^|\n+)(?:\t|  {2,}).+)+\n*)|((?:(?:^|\n)([>*+-]|\d+\.)\s+.*)+)|(?:!\[([^\]]*?)\]\(([^)]+?)\))|(\[)|(\](?:\(([^)]+?)\))?)|(?:(?:^|\n+)([^\s].*)\n(-{3,}|={3,})(?:\n+|$))|(?:(?:^|\n+)(#{1,6})\s*(.+)(?:\n+|$))|(?:`([^`].*?)`)|( {2}\n\n*|\n{2,}|__|\*\*|[_*]|~~)|((?:(?:^|\n+)(?:\|.*))+)|(?:^::: *(\w*)\n([\s\S]*?)\n:::$)|<[^>]+>/gm
+
   const context: any[] = []
 
   let out = ''
   let last = 0
-  let prevChunk, nextChunk, token, inner, forceNewline
+  let prevChunk, nextChunk, token, inner
 
   function tag(token: string) {
     const desc = TAGS[(token[1] || '') as keyof typeof TAGS]
@@ -61,14 +69,12 @@ function parse(md: string, options?: { links?: Record<string, string>; paragraph
     prevChunk = md.substring(last, token.index)
     last = tokenizer.lastIndex
     nextChunk = token[0]
-    forceNewline = false
 
     if (prevChunk.match(/[^\\](\\\\)*\\$/)) {
       // escaped
     }
     // Code/Indent blocks:
     else if (token[3] || token[4]) {
-      forceNewline = true
       const t = token[3] || token[4]
       nextChunk =
         '<pre class="code ' +
@@ -81,7 +87,6 @@ function parse(md: string, options?: { links?: Record<string, string>; paragraph
     }
     // > Quotes, -* lists:
     else if (token[6]) {
-      forceNewline = true
       let t = token[6]
       if (t.match(/\./)) {
         token[5] = token[5].replace(/^\d+/gm, '')
@@ -96,24 +101,20 @@ function parse(md: string, options?: { links?: Record<string, string>; paragraph
     }
     // Images:
     else if (token[8]) {
-      forceNewline = true
       nextChunk = `<img src="${encodeAttr(token[8])}" alt="${encodeAttr(token[7])}">`
     }
     // Links:
     else if (token[10]) {
-      forceNewline = false
       out = out.replace(
         '<a>',
         `<a href="${encodeAttr(token[11] || links[prevChunk.toLowerCase()])}">`
       )
       nextChunk = flush() + '</a>'
     } else if (token[9]) {
-      forceNewline = false
       nextChunk = '<a>'
     }
     // Headings:
     else if (token[12] || token[14]) {
-      forceNewline = true
       const t = 'h' + (token[14] ? token[14].length : token[13] > '=' ? 1 : 2)
       nextChunk =
         '<' +
@@ -126,17 +127,14 @@ function parse(md: string, options?: { links?: Record<string, string>; paragraph
     }
     // `code`:
     else if (token[16]) {
-      forceNewline = false
       nextChunk = '<code>' + encodeAttr(token[16]) + '</code>'
     }
     // Inline formatting: *em*, **strong** & friends
     else if (token[17] || token[1]) {
       nextChunk = tag(token[17] || '--')
-      forceNewline = nextChunk === '<hr />'
     }
     // Table parser
     else if (token[18]) {
-      forceNewline = true
       const l = token[18].split('\n')
       let i = l.length,
         table = '',
@@ -159,16 +157,10 @@ function parse(md: string, options?: { links?: Record<string, string>; paragraph
     }
     // Fenced divs:
     else if (token[20]) {
-      forceNewline = true
       nextChunk = `<div class="fenced ${token[19] || ''}">` + encodeAttr(token[20]) + '</div>'
     }
 
-    if (
-      paragraphise &&
-      prevChunk &&
-      !prevChunk.startsWith('<') &&
-      (/^\n+$/.test(nextChunk) || forceNewline)
-    ) {
+    if (paragraphise && prevChunk && !prevChunk.startsWith('<') && !isInline(nextChunk)) {
       out += `<p>${prevChunk
         .trim()
         .replace(/([^\n])( ?\n ?)([^\n])/gm, '$1 $3')}</p>${nextChunk.trim()}`
@@ -180,7 +172,8 @@ function parse(md: string, options?: { links?: Record<string, string>; paragraph
 
   let tail = md.substring(last)
 
-  const oneLiner = !out.startsWith('<') && !out.match(/\n\n/) && !tail.match(/\n\n/)
+  const oneLiner =
+    (!out.startsWith('<') || isInline(out)) && !out.match(/\n\n/) && !tail.match(/\n\n/)
 
   if (paragraphise && !oneLiner && tail.trim()) {
     tail = `<p>${tail.trim().replace(/([^\n])( ?\n ?)([^\n])/gm, '$1 $3')}</p>`

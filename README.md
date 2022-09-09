@@ -25,14 +25,14 @@ Starkdown is really easy to use, a single function which parses a string of Mark
 ```js
 import { starkdown } from 'starkdown';
 
-const md = '_this_ is **easy** to `use`.';
+const md = '_This_ is **easy** to `use`.';
 const html = starkdown(md);
 console.log(html);
 ```
 
 Your html looks like
 ```html
-<em>this</em> is <strong>easy</strong> to <code>use</code>.
+<em>This</em> is <strong>easy</strong> to <code>use</code>.
 ```
 
 ### Tables
