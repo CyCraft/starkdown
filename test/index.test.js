@@ -269,4 +269,19 @@ describe('starkdown()', () => {
       expect(starkdown('::: info\ninfo\n:::')).toEqual('<div class="fenced info">info</div>')
     })
   })
+
+  describe('html', () => {
+    it('should not parse inside tags', () => {
+      expect(starkdown('<div title="I **don\'t** parse"></div>')).to.equal(
+        '<div title="I **don\'t** parse"></div>'
+      )
+      expect(starkdown('<a class="_b" target="_blank">a</a>')).to.equal(
+        '<a class="_b" target="_blank">a</a>'
+      )
+    })
+
+    it('should parse outside HTML tags', () => {
+      expect(starkdown('<a>**a**</a>')).to.equal('<a><strong>a</strong></a>')
+    })
+  })
 })
