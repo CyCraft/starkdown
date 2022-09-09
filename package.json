@@ -9,7 +9,7 @@
   "modern": "./dist/starkdown.modern.js",
   "umd:main": "./dist/starkdown.umd.js",
   "unpkg": "./dist/starkdown.umd.js",
-  "types": "./starkdown.d.ts",
+  "types": "./dist/types/src/index.d.ts",
   "scripts": {
     "build": "microbundle",
     "dev": "microbundle watch",
