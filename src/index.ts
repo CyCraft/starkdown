@@ -23,7 +23,7 @@ function encodeAttr(str: string) {
 }
 
 /** Parse Markdown into an HTML String. */
-export function starkdown(md: string, prevLinks?: Record<string, string>) {
+function parse(md: string, prevLinks?: Record<string, string>) {
   const tokenizer =
     /((?:^|\n+)(?:\n---+|\* \*(?: \*)+)\n)|(?:^``` *(\w*)\n([\s\S]*?)\n```$)|((?:(?:^|\n+)(?:\t|  {2,}).+)+\n*)|((?:(?:^|\n)([>*+-]|\d+\.)\s+.*)+)|(?:!\[([^\]]*?)\]\(([^)]+?)\))|(\[)|(\](?:\(([^)]+?)\))?)|(?:(?:^|\n+)([^\s].*)\n(-{3,}|={3,})(?:\n+|$))|(?:(?:^|\n+)(#{1,6})\s*(.+)(?:\n+|$))|(?:`([^`].*?)`)|( {2}\n\n*|\n{2,}|__|\*\*|[_*]|~~)/gm
   const context: any[] = []
@@ -81,7 +81,7 @@ export function starkdown(md: string, prevLinks?: Record<string, string>) {
       if (t.match(/\./)) {
         token[5] = token[5].replace(/^\d+/gm, '')
       }
-      inner = starkdown(outdent(token[5].replace(/^\s*[>*+.-]/gm, '')))
+      inner = parse(outdent(token[5].replace(/^\s*[>*+.-]/gm, '')))
       if (t == '>') t = 'blockquote'
       else {
         t = t.match(/\./) ? 'ol' : 'ul'
@@ -103,7 +103,7 @@ export function starkdown(md: string, prevLinks?: Record<string, string>) {
     // Headings:
     else if (token[12] || token[14]) {
       const t = 'h' + (token[14] ? token[14].length : token[13] > '=' ? 1 : 2)
-      chunk = '<' + t + '>' + starkdown(token[12] || token[15], links) + '</' + t + '>'
+      chunk = '<' + t + '>' + parse(token[12] || token[15], links) + '</' + t + '>'
     }
     // `code`:
     else if (token[16]) {
@@ -118,4 +118,11 @@ export function starkdown(md: string, prevLinks?: Record<string, string>) {
   }
 
   return (out + md.substring(last) + flush()).replace(/^\n+|\n+$/g, '')
+}
+
+/**
+ * Parse Markdown into an HTML String
+ */
+export function starkdown(md: string): string {
+  return parse(md)
 }
