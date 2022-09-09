@@ -1,3 +1,82 @@
+# Starkdown 🦾
+
+<a href="https://www.npmjs.com/package/starkdown"><img src="https://img.shields.io/npm/v/starkdown.svg" alt="Total Downloads"></a>
+<a href="https://www.npmjs.com/package/starkdown"><img src="https://img.shields.io/npm/dw/starkdown.svg" alt="Latest Stable Version"></a>
+
+Starkdown is a Tiny <2kb Markdown parser written, almost as fast and smart as Tony Stark.
+
+```sh
+npm i starkdown
+```
+
+## Motivation
+
+It is a continuation on [Snarkdown](https://github.com/developit/snarkdown), which had stopped development at 1kb, but doesn't include support for tables and fenced divs.
+
+Starkdown adds these additional enhancements:
+
+- [Tables](#tables)
+- [Fenced Divs](#fenced-divs)
+
+## Usage
+
+Starkdown is really easy to use, a single function which parses a string of Markdown and returns a String of HTML. Couldn't be simpler.
+
+```js
+import { starkdown } from 'starkdown';
+
+const md = '_this_ is **easy** to `use`.';
+const html = starkdown(md);
+console.log(html);
+```
+
+Your html looks like
+```html
+<em>this</em> is <strong>easy</strong> to <code>use</code>.
+```
+
+### Tables
+
+```md
+| My | Table
+```
+
+converts to
+
+```html
+<table><tr><td>My</td><td>Table</td></tr></table>
+```
+
+### Fenced Divs
+
+```md
+:::
+this is some info
+:::
+```
+
+converts to
+
+```html
+<div class="fenced">this is some info</div>
+```
+
+**Or with a custom class.**
+
+```md
+::: info
+this is some info
+:::
+```
+
+converts to
+
+```html
+<div class="fenced info">this is some info</div>
+```
+
+---
+
 <p align="center">
   <img src="https://cdn.jsdelivr.net/emojione/assets/svg/1f63c.svg" width="256" height="256" alt="Snarkdown">
 </p>
