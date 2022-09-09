@@ -25,7 +25,7 @@ function encodeAttr(str: string) {
 /** Parse Markdown into an HTML String. */
 function parse(md: string, prevLinks?: Record<string, string>) {
   const tokenizer =
-    /((?:^|\n+)(?:\n---+|\* \*(?: \*)+)\n)|(?:^``` *(\w*)\n([\s\S]*?)\n```$)|((?:(?:^|\n+)(?:\t|  {2,}).+)+\n*)|((?:(?:^|\n)([>*+-]|\d+\.)\s+.*)+)|(?:!\[([^\]]*?)\]\(([^)]+?)\))|(\[)|(\](?:\(([^)]+?)\))?)|(?:(?:^|\n+)([^\s].*)\n(-{3,}|={3,})(?:\n+|$))|(?:(?:^|\n+)(#{1,6})\s*(.+)(?:\n+|$))|(?:`([^`].*?)`)|( {2}\n\n*|\n{2,}|__|\*\*|[_*]|~~)|(?:^::: *(\w*)\n([\s\S]*?)\n:::$)/gm
+    /((?:^|\n+)(?:\n---+|\* \*(?: \*)+)\n)|(?:^``` *(\w*)\n([\s\S]*?)\n```$)|((?:(?:^|\n+)(?:\t|  {2,}).+)+\n*)|((?:(?:^|\n)([>*+-]|\d+\.)\s+.*)+)|(?:!\[([^\]]*?)\]\(([^)]+?)\))|(\[)|(\](?:\(([^)]+?)\))?)|(?:(?:^|\n+)([^\s].*)\n(-{3,}|={3,})(?:\n+|$))|(?:(?:^|\n+)(#{1,3})\s*(.+)(?:\n+|$))|(?:`([^`].*?)`)|( {2}\n\n*|\n{2,}|__|\*\*|[_*]|~~)|((?:(?:^|\n+)(?:\|.*))+)|(?:^::: *(\w*)\n([\s\S]*?)\n:::$)/gm
   const context: any[] = []
   const links = prevLinks || {}
   let out = ''
@@ -113,10 +113,31 @@ function parse(md: string, prevLinks?: Record<string, string>) {
     else if (token[17] || token[1]) {
       chunk = tag(token[17] || '--')
     }
-
+    // Table parser
+    else if (token[18]) {
+      const l = token[18].split('\n')
+      let i = l.length,
+        table = '',
+        r = 'td>'
+      while (i--) {
+        if (l[i].match(/^\|\s+---+.*$/)) {
+          r = 'th>'
+          continue
+        }
+        const c = l[i].split(/\|\s*/)
+        let j = c.length,
+          tr = ''
+        while (j--) {
+          tr = (c[j] ? `<${r + parse(c[j].trim())}</${r}` : '') + tr
+        }
+        table = `<tr>${tr}</tr>` + table
+        r = 'td>'
+      }
+      chunk = `<table>${table}</table>`
+    }
     // Fenced divs:
-    else if (token[19]) {
-      chunk = `<div class="fenced ${token[18] || ''}">` + encodeAttr(token[19]) + '</div>'
+    else if (token[20]) {
+      chunk = `<div class="fenced ${token[19] || ''}">` + encodeAttr(token[20]) + '</div>'
     }
     out += prev
     out += chunk
