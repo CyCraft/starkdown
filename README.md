@@ -38,7 +38,7 @@ Your html looks like
 ### Tables
 
 ```md
-| My | Table
+| My | Table |
 ```
 
 converts to
