@@ -1,73 +1,96 @@
 {
-  "name": "snarkdown",
-  "description": "Transform Markdown into HTML.",
-  "version": "2.0.0",
-  "main": "./dist/snarkdown.js",
-  "module": "./dist/snarkdown.es.js",
-  "modern": "./dist/snarkdown.modern.js",
-  "umd:main": "./dist/snarkdown.umd.js",
-  "unpkg": "./dist/snarkdown.umd.js",
-  "types": "./snarkdown.d.ts",
+  "name": "starkdown",
+  "sideEffects": false,
+  "type": "module",
+  "version": "2.0.1",
+  "description": "Tiny <2kb Markdown parser written, almost as fast and smart as Tony Stark",
+  "main": "./dist/starkdown.js",
+  "module": "./dist/starkdown.es.js",
+  "modern": "./dist/starkdown.modern.js",
+  "umd:main": "./dist/starkdown.umd.js",
+  "unpkg": "./dist/starkdown.umd.js",
+  "types": "./starkdown.d.ts",
   "scripts": {
     "build": "microbundle",
     "dev": "microbundle watch",
-    "test": "eslint src test && NODE_ENV=test mocha --compilers @babel/register",
-    "prepublish": "npm run -s build",
+    "lint": "tsc --noEmit && eslint ./src --ext .ts",
+    "test": "vitest run",
     "release": "npm run -s build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
   },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.36.2",
+    "@typescript-eslint/parser": "^5.36.2",
+    "del-cli": "^5.0.0",
+    "eslint": "^8.23.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-tree-shaking": "^1.10.0",
+    "microbundle": "^0.15.1",
+    "np": "^7.6.2",
+    "prettier": "^2.7.1",
+    "rollup": "^2.79.0",
+    "rollup-plugin-typescript2": "^0.33.0",
+    "typescript": "^4.8.3",
+    "vite": "^3.1.0",
+    "vitest": "^0.23.1"
+  },
   "authors": [
-    "Jason Miller <jason@developit.ca>"
+    "Jason Miller <jason@developit.ca>",
+    "Luca Ban - Mesqueeb"
   ],
+  "funding": "https://github.com/sponsors/mesqueeb",
   "files": [
     "src",
     "dist",
-    "snarkdown.d.ts"
+    "starkdown.d.ts"
   ],
-  "homepage": "https://github.com/developit/snarkdown",
-  "repository": "developit/snarkdown",
+  "homepage": "https://github.com/cycraft/starkdown#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cycraft/starkdown.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cycraft/starkdown/issues"
+  },
   "license": "MIT",
   "keywords": [
     "markdown",
+    "snarkdown",
+    "starkdown",
+    "markdown-it",
     "gfm",
     "md",
     "html",
     "parser"
   ],
-  "devDependencies": {
-    "@babel/preset-env": "^7.11.5",
-    "@babel/register": "^7.11.5",
-    "chai": "^3.5.0",
-    "eslint": "^7.7.0",
-    "eslint-config-developit": "^1.2.0",
-    "microbundle": "^0.12.0",
-    "mocha": "^5.1.1",
-    "npm-merge-driver-install": "^1.1.1"
+  "np": {
+    "yarn": false,
+    "branch": "production"
   },
   "eslintConfig": {
-    "extends": "developit",
-    "env": {
-      "browser": true,
-      "mocha": true,
-      "node": true,
-      "es6": true
-    },
-    "globals": {
-      "expect": true
-    },
+    "ignorePatterns": [
+      "node_modules",
+      "dist",
+      "scripts",
+      "test"
+    ],
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint",
+      "tree-shaking"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:@typescript-eslint/recommended",
+      "prettier"
+    ],
     "rules": {
-      "jest/valid-expect": 0,
-      "no-console": 1,
-      "no-cond-assign": 0,
-      "no-regex-spaces": 0
-    }
-  },
-  "babel": {
-    "env": {
-      "test": {
-        "presets": [
-          "@babel/preset-env"
-        ]
-      }
+      "@typescript-eslint/no-empty-function": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/ban-ts-ignore": "off",
+      "tree-shaking/no-side-effects-in-initialization": "error",
+      "@typescript-eslint/ban-ts-comment": "off"
     }
   }
 }

@@ -1,4 +1,4 @@
-declare module "snarkdown" {
+declare module "starkdown" {
   interface Links {
     [index: string]: string;
   }
