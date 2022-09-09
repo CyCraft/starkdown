@@ -24,7 +24,7 @@ describe('starkdown()', () => {
     })
 
     it('parses strikethrough with ~~', () => {
-      expect(snarkdown('I ~~like~~ tiny libraries')).to.equal('I <s>like</s> tiny libraries')
+      expect(starkdown('I ~~like~~ tiny libraries')).toEqual('I <s>like</s> tiny libraries')
     })
   })
 
@@ -217,6 +217,15 @@ describe('starkdown()', () => {
       expect(starkdown('**')).toEqual('<strong></strong>')
       expect(starkdown('>')).toEqual('>')
       expect(starkdown('`')).toEqual('`')
+    })
+  })
+
+  describe('fenced divs (notes)', () => {
+    it('parses three colons (:::) as fenced divs', () => {
+      expect(starkdown(':::\ninfo\n:::')).toEqual('<div class="fenced">info</div>')
+    })
+    it('fenced div with custom class', () => {
+      expect(starkdown('::: info\ninfo\n:::')).toEqual('<div class="fenced info">info</div>')
     })
   })
 })
