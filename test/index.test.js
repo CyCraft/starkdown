@@ -22,6 +22,10 @@ describe('starkdown()', () => {
     it('parses italics with _', () => {
       expect(starkdown('I _like_ tiny libraries')).toEqual('I <em>like</em> tiny libraries')
     })
+
+    it('parses strikethrough with ~~', () => {
+      expect(snarkdown('I ~~like~~ tiny libraries')).to.equal('I <s>like</s> tiny libraries')
+    })
   })
 
   describe('titles', () => {
