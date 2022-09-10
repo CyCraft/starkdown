@@ -145,7 +145,7 @@ correctly converts to
 <p>snake_case is <em>so-so</em></p>
 
 <!-- but in Snarkdown... -->
-<p>snake<em>case is </em>so-so<em></em></p>
+snake<em>case is </em>so-so<em></em>
 ```
 
 I have greatly simplified the complex logic of Snarkdown and fixed formatting issues like these.
