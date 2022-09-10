@@ -341,6 +341,7 @@ describe('edge cases', () => {
   })
 
   test('should not choke on single characters', () => {
+    // @ts-ignore
     expect(starkdown()).toEqual('')
     expect(starkdown('')).toEqual('')
     expect(starkdown('*')).toEqual('*')
