@@ -4,12 +4,22 @@
   "type": "module",
   "version": "2.0.1",
   "description": "Tiny <2kb Markdown parser written, almost as fast and smart as Tony Stark",
-  "main": "./dist/starkdown.js",
+  "main": "./dist/starkdown.cjs",
   "module": "./dist/starkdown.es.js",
   "modern": "./dist/starkdown.modern.js",
   "umd:main": "./dist/starkdown.umd.js",
   "unpkg": "./dist/starkdown.umd.js",
   "types": "./dist/types/src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/starkdown.es.js",
+      "require": "./dist/starkdown.cjs",
+      "types": "./dist/types/src/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "microbundle",
     "dev": "microbundle watch",
@@ -38,11 +48,6 @@
     "Luca Ban - Mesqueeb"
   ],
   "funding": "https://github.com/sponsors/mesqueeb",
-  "files": [
-    "src",
-    "dist",
-    "starkdown.d.ts"
-  ],
   "homepage": "https://github.com/cycraft/starkdown#readme",
   "repository": {
     "type": "git",
