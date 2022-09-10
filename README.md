@@ -113,7 +113,7 @@ this is some info
 converts to
 
 ```html
-<div class="fenced "><p>this is some info</p></div>
+<div class="fenced"><p>this is some info</p></div>
 ```
 
 **Or with a custom class.**

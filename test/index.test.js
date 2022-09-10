@@ -393,24 +393,29 @@ describe('tables', () => {
 
 describe('fenced divs (notes)', () => {
   test('parses three colons (:::) as fenced divs', () => {
-    expect(starkdown(':::\ninfo\n:::')).toEqual('<div class="fenced "><p>info</p></div>')
+    expect(starkdown(':::\ninfo\n:::')).toEqual('<div class="fenced"><p>info</p></div>')
   })
   test('fenced div with custom class', () => {
     expect(starkdown('::: info\ninfo\n:::')).toEqual('<div class="fenced info"><p>info</p></div>')
   })
+  test('fenced div with custom classes', () => {
+    expect(starkdown('::: info-card mt-md c-font-def\ninfo\n:::')).toEqual(
+      '<div class="fenced info-card mt-md c-font-def"><p>info</p></div>'
+    )
+  })
   test('fenced div with Markdown', () => {
     expect(starkdown(':::\n**info**\n:::')).toEqual(
-      '<div class="fenced "><p><strong>info</strong></p></div>'
+      '<div class="fenced"><p><strong>info</strong></p></div>'
     )
   })
   test('fenced div with single new lines', () => {
     expect(starkdown(':::\n**info**\n[docs](https://github.com)\n:::')).toEqual(
-      `<div class="fenced "><p><strong>info</strong> \n<a href="https://github.com">docs</a></p></div>`
+      `<div class="fenced"><p><strong>info</strong> \n<a href="https://github.com">docs</a></p></div>`
     )
   })
   test('fenced div with double new lines', () => {
     expect(starkdown(':::\n**info**\n\n[docs](https://github.com)\n:::')).toEqual(
-      '<div class="fenced "><p><strong>info</strong></p><p><a href="https://github.com">docs</a></p></div>'
+      '<div class="fenced"><p><strong>info</strong></p><p><a href="https://github.com">docs</a></p></div>'
     )
   })
 })
@@ -442,7 +447,7 @@ describe('too few linebreaks around blocks', () => {
 
   test('1 linebreak around :::', () => {
     expect(starkdown('hi\n:::\ninfo\n:::\nhi')).toEqual(
-      '<p>hi</p><div class="fenced "><p>info</p></div><p>hi</p>'
+      '<p>hi</p><div class="fenced"><p>info</p></div><p>hi</p>'
     )
   })
 
@@ -495,7 +500,7 @@ describe('from the readme', () => {
   })
   test('fenced divs example 1', () => {
     expect(starkdown(`:::\nthis is some info\n:::`)).toEqual(
-      '<div class="fenced "><p>this is some info</p></div>'
+      '<div class="fenced"><p>this is some info</p></div>'
     )
   })
   test('fenced divs example 2', () => {
@@ -507,3 +512,9 @@ describe('from the readme', () => {
     expect(starkdown(`snake_case is _so-so_`)).toEqual('<p>snake_case is <em>so-so</em></p>')
   })
 })
+
+// test.only('complex edge case', () => {
+//   const content = ``
+
+//   expect(starkdown(content)).toEqual('')
+// })
