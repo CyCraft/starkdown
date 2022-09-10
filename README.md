@@ -11,27 +11,29 @@ npm i starkdown
 
 ## Motivation
 
-It is a continuation on [Snarkdown](https://github.com/developit/snarkdown), which had stopped development at 1kb, but doesn't include support for paragraphs, tables and fenced divs.
+It is a continuation on a similar package called [Snarkdown](https://github.com/developit/snarkdown), which had stopped development at 1kb, but doesn't include basic support for paragraphs, tables, fenced divs, etc.
 
-Starkdown adds these additional enhancements:
+Starkdown stays around 1.6kb and adds these additional enhancements:
 
 - [Paragraphs](#paragraphs)
 - [Tables](#tables)
 - [Fenced Divs](#fenced-divs)
+- [Formating done Right](#formating-done-right)
 
 ## Usage
 
 Starkdown is really easy to use, a single function which parses a string of Markdown and returns a String of HTML. Couldn't be simpler.
 
 ```js
-import { starkdown } from 'starkdown';
+import { starkdown } from 'starkdown'
 
-const md = '_This_ is **easy** to `use`.';
-const html = starkdown(md);
-console.log(html);
+const md = '_This_ is **easy** to `use`.'
+const html = starkdown(md)
+console.log(html)
 ```
 
-Your html looks like
+The html returned will look like:
+
 ```html
 <p><em>This</em> is <strong>easy</strong> to <code>use</code>.</p>
 ```
@@ -47,18 +49,18 @@ With most Markdown implementations, paragraphs are wrapped in `<p>` tags. With S
   - Eg. a table will not be wrapped in a `<p>` tag.
 
 ```md
-[github](https://github.com)
+Check [github](https://github.com)
 
-![](/some-image.png)
+Img: ![](/some-image.png)
 ```
 
 converts to
 
 ```html
-<p><a href="https://github.com">github</a></p><p><img src="/some-image.png" /></p>
+<p>Check <a href="https://github.com">github</a></p><p>Img: <img src="/some-image.png" alt="" /></p>
 ```
 
-But also, when just using images and links:
+But also, when _just_ using images and links:
 
 ```md
 [github](https://github.com)
@@ -69,7 +71,23 @@ But also, when just using images and links:
 converts to
 
 ```html
-<p><a href="https://github.com">github</a></p><p><img src="/some-image.png" /></p>
+<p><a href="https://github.com">github</a></p><p><img src="/some-image.png" alt="" /></p>
+```
+
+In contrast, non-inline elements won't get a `<p>` tag:
+
+```md
+### Usage
+
+\`\`\`js
+const a = 1
+\`\`\`
+```
+
+converts to
+
+```html
+<h3>Usage</h3><pre class="code js"><code class="language-js">const a = 1</code></pre>
 ```
 
 ### Tables
@@ -95,7 +113,7 @@ this is some info
 converts to
 
 ```html
-<div class="fenced ">this is some info</div>
+<div class="fenced "><p>this is some info</p></div>
 ```
 
 **Or with a custom class.**
@@ -109,61 +127,29 @@ this is some info
 converts to
 
 ```html
-<div class="fenced info">this is some info</div>
+<div class="fenced info"><p>this is some info</p></div>
 ```
 
----
+### Formating done Right
 
-<p align="center">
-  <img src="https://cdn.jsdelivr.net/emojione/assets/svg/1f63c.svg" width="256" height="256" alt="Snarkdown">
-</p>
-<h1 align="center">
-  Snarkdown
-  <a href="https://www.npmjs.org/package/snarkdown">
-    <img src="https://img.shields.io/npm/v/snarkdown.svg?style=flat" alt="npm">
-  </a>
-</h1>
+You need to pad your formatting with spaces in order to correctly convert sentences like these:
 
-Snarkdown is a dead simple **1kb** [Markdown] parser.
-
-It's designed to be as minimal as possible, for constrained use-cases where a full Markdown parser would be inappropriate.
-
-
-## Features
-
-- **Fast:** since it's basically one regex and a huge if statement
-- **Tiny:** it's 1kb of gzipped ES3
-- **Simple:** pass a Markdown string, get back an HTML string
-
-> **Note:** Tables are not yet supported. If you love impossible to read regular expressions, submit a PR!
->
-> **Note on XSS:** Snarkdown [doesn't sanitize HTML](https://github.com/developit/snarkdown/issues/70), since its primary target usage doesn't require it.
-
-## Demos & Examples
-
-- ⚛️ [**Snarky**](https://snarky.surge.sh) - markdown editor built with Preact & Snarkdown
-- ✏️ [**Simple Markdown Editor**](http://jsfiddle.net/developit/828w6t1x/)
-
-
-## Usage
-
-Snarkdown exports a single function, which parses a string of Markdown and returns a String of HTML. Couldn't be simpler.
-
-The snarkdown module is available in [every module format](https://unpkg.com/snarkdown/dist/) you'd ever need: ES Modules, CommonJS, UMD...
-
-```js
-import snarkdown from 'snarkdown';
-
-let md = '_this_ is **easy** to `use`.';
-let html = snarkdown(md);
-console.log(html);
-// <em>this</em> is <strong>easy</strong> to <code>use</code>.
+```md
+snake_case is _so-so_
 ```
 
-### Add-ons and Libraries
+correctly converts to
 
-- For Webpack users, [`snarkdown-loader`](https://github.com/Plugin-contrib/snarkdown-loader) renders markdown files to html.
+```html
+<!-- in this library -->
+<p>snake_case is <em>so-so</em></p>
 
+<!-- but in Snarkdown... -->
+<p>snake<em>case is </em>so-so<em></em></p>
+```
 
+I have greatly simplified the complex logic of Snarkdown and fixed formatting issues like these.
 
-[Markdown]: http://daringfireball.net/projects/markdown/
+## Security
+
+**Note on XSS:** Starkdown doesn't sanitize HTML. Please bring your own HTML sanitation for any place where user input will be converted into HTML.

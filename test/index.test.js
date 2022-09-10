@@ -48,6 +48,39 @@ describe('paragraphs', () => {
   })
 })
 
+describe('ignore special formating as part of words', () => {
+  test('_', () => {
+    expect(starkdown('I like tiny_libraries _for real_')).toEqual(
+      '<p>I like tiny_libraries <em>for real</em></p>'
+    )
+  })
+  test('__', () => {
+    expect(starkdown('I like tiny__libraries __for real__')).toEqual(
+      '<p>I like tiny__libraries <strong>for real</strong></p>'
+    )
+  })
+  test('~~', () => {
+    expect(starkdown('I like tiny~~libraries ~~for real~~')).toEqual(
+      '<p>I like tiny~~libraries <s>for real</s></p>'
+    )
+  })
+  test('-', () => {
+    expect(starkdown('I like tiny - libraries -for real-')).toEqual(
+      '<p>I like tiny - libraries -for real-</p>'
+    )
+  })
+  test('*', () => {
+    expect(starkdown('I like tiny*libraries *for real*')).toEqual(
+      '<p>I like tiny*libraries <em>for real</em></p>'
+    )
+  })
+  test('**', () => {
+    expect(starkdown('I like tiny**libraries **for real**')).toEqual(
+      '<p>I like tiny**libraries <strong>for real</strong></p>'
+    )
+  })
+})
+
 describe('text formatting', () => {
   test('parses bold with **', () => {
     expect(starkdown('I **like** tiny libraries')).toEqual(
@@ -122,6 +155,15 @@ describe('links & images', () => {
   test('parses links', () => {
     expect(starkdown('[starkdown](http://github.com/developit/starkdown)')).toEqual(
       '<p><a href="http://github.com/developit/starkdown">starkdown</a></p>'
+    )
+  })
+
+  test('parses links with bold text', () => {
+    expect(starkdown('[**starkdown**](http://github.com/developit/starkdown)')).toEqual(
+      '<p><a href="http://github.com/developit/starkdown"><strong>starkdown</strong></a></p>'
+    )
+    expect(starkdown('[ **starkdown** ](http://github.com/developit/starkdown)')).toEqual(
+      '<p><a href="http://github.com/developit/starkdown"><strong>starkdown</strong></a></p>'
     )
   })
 
@@ -288,11 +330,12 @@ describe('<hr />', () => {
 })
 
 describe('edge cases', () => {
-  test('should close unclosed tags', () => {
-    expect(starkdown('*foo')).toEqual('<p><em>foo</em></p>')
-    expect(starkdown('foo**')).toEqual('<p>foo<strong></strong></p>')
+  // these mistakes are on the user...
+  test('should not close unclosed tags', () => {
+    expect(starkdown('*foo')).toEqual('<p><em>foo</p>')
+    expect(starkdown('foo**')).toEqual('<p>foo</strong></p>')
     expect(starkdown('[some **bold text](#winning)')).toEqual(
-      '<p><a href="#winning">some <strong>bold text</strong></a></p>'
+      '<p><a href="#winning">some <strong>bold text</a></p>'
     )
     expect(starkdown('`foo')).toEqual('<p>`foo</p>')
   })
@@ -341,19 +384,34 @@ describe('tables', () => {
       '<table><tr><th>a</th><th><h1>hallo welt</h1></th><th>c</th></tr></table>'
     )
     expect(
-      starkdown('|   [some **bold text](#winning)  | b \n| --- | --- \n| > To be or not to be | f')
+      starkdown('|  **[some bold text](#winning)** | b \n| --- | --- \n| > To be or not to be | f')
     ).toEqual(
-      '<table><tr><th><a href="#winning">some <strong>bold text</strong></a></th><th>b</th></tr><tr><td><blockquote>To be or not to be</blockquote></td><td>f</td></tr></table>'
+      '<table><tr><th><strong><a href="#winning">some bold text</a></strong></th><th>b</th></tr><tr><td><blockquote>To be or not to be</blockquote></td><td>f</td></tr></table>'
     )
   })
 })
 
 describe('fenced divs (notes)', () => {
   test('parses three colons (:::) as fenced divs', () => {
-    expect(starkdown(':::\ninfo\n:::')).toEqual('<div class="fenced ">info</div>')
+    expect(starkdown(':::\ninfo\n:::')).toEqual('<div class="fenced "><p>info</p></div>')
   })
   test('fenced div with custom class', () => {
-    expect(starkdown('::: info\ninfo\n:::')).toEqual('<div class="fenced info">info</div>')
+    expect(starkdown('::: info\ninfo\n:::')).toEqual('<div class="fenced info"><p>info</p></div>')
+  })
+  test('fenced div with Markdown', () => {
+    expect(starkdown(':::\n**info**\n:::')).toEqual(
+      '<div class="fenced "><p><strong>info</strong></p></div>'
+    )
+  })
+  test('fenced div with single new lines', () => {
+    expect(starkdown(':::\n**info**\n[docs](https://github.com)\n:::')).toEqual(
+      `<div class="fenced "><p><strong>info</strong> \n<a href="https://github.com">docs</a></p></div>`
+    )
+  })
+  test('fenced div with double new lines', () => {
+    expect(starkdown(':::\n**info**\n\n[docs](https://github.com)\n:::')).toEqual(
+      '<div class="fenced "><p><strong>info</strong></p><p><a href="https://github.com">docs</a></p></div>'
+    )
   })
 })
 
@@ -371,6 +429,7 @@ describe('html', () => {
 
   test('should parse outside HTML tags', () => {
     expect(starkdown('<a>**a**</a>')).toEqual('<p><a><strong>a</strong></a></p>')
+    expect(starkdown('<a> **a** </a>')).toEqual('<p><a><strong>a</strong></a></p>')
   })
 })
 
@@ -383,7 +442,7 @@ describe('too few linebreaks around blocks', () => {
 
   test('1 linebreak around :::', () => {
     expect(starkdown('hi\n:::\ninfo\n:::\nhi')).toEqual(
-      '<p>hi</p><div class="fenced ">info</div><p>hi</p>'
+      '<p>hi</p><div class="fenced "><p>info</p></div><p>hi</p>'
     )
   })
 
@@ -412,5 +471,39 @@ describe('too few linebreaks around blocks', () => {
     expect(starkdown('foo\n* * *\nbar')).toEqual('<p>foo</p><hr /><p>bar</p>')
     expect(starkdown('foo\n* * * *\nbar'), '* * * *').toEqual('<p>foo</p><hr /><p>bar</p>')
     expect(starkdown('> foo\n\n* * *\nbar')).toEqual('<blockquote>foo</blockquote><hr /><p>bar</p>')
+  })
+})
+
+describe('from the readme', () => {
+  test('paragraphs example 1', () => {
+    expect(starkdown(`Check [github](https://github.com)\n\nImg: ![](/some-image.png)`)).toEqual(
+      '<p>Check <a href="https://github.com">github</a></p><p>Img: <img src="/some-image.png" alt="" /></p>'
+    )
+  })
+  test('paragraphs example 2', () => {
+    expect(starkdown(`[github](https://github.com)\n\n![](/some-image.png)`)).toEqual(
+      '<p><a href="https://github.com">github</a></p><p><img src="/some-image.png" alt="" /></p>'
+    )
+  })
+  test('paragraphs example 3', () => {
+    expect(starkdown(`### Usage\n\`\`\`js\nconst a = 1\n\`\`\``)).toEqual(
+      '<h3>Usage</h3><pre class="code js"><code class="language-js">const a = 1</code></pre>'
+    )
+  })
+  test('tables example 1', () => {
+    expect(starkdown(`| My | Table |`)).toEqual('<table><tr><td>My</td><td>Table</td></tr></table>')
+  })
+  test('fenced divs example 1', () => {
+    expect(starkdown(`:::\nthis is some info\n:::`)).toEqual(
+      '<div class="fenced "><p>this is some info</p></div>'
+    )
+  })
+  test('fenced divs example 2', () => {
+    expect(starkdown(`::: info\nthis is some info\n:::`)).toEqual(
+      '<div class="fenced info"><p>this is some info</p></div>'
+    )
+  })
+  test('formatting example 1', () => {
+    expect(starkdown(`snake_case is _so-so_`)).toEqual('<p>snake_case is <em>so-so</em></p>')
   })
 })
