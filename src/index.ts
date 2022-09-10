@@ -17,14 +17,14 @@ function isInline(tag: string): boolean {
 /** Outdent a string based on the first indented line's leading whitespace
  *	@private
  */
-function outdent(str: string) {
+function outdent(str: string): string {
   return str.replace(RegExp('^' + (str.match(/^(\t| )+/) || '')[0], 'gm'), '')
 }
 
 /** Encode special attribute characters to HTML entities in a String.
  *	@private
  */
-function encodeAttr(str: string) {
+function encodeAttr(str: string): string {
   return (str + '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
 
