@@ -195,7 +195,7 @@ function parse(
   const paragraphs = goodParagraphSpacing.split(paragraphSplitRegex)
 
   let fencedBlock: false | string = false
-  const restitchedFencedBlocks = paragraphs.reduce<string[]>((result, p, i) => {
+  const restitchedFencedBlocks = paragraphs.reduce<string[]>((result, p) => {
     if (fencedBlock) {
       result[result.length - 1] += fencedBlock === ':::' ? `\n\n${p}` : `\n${p}`
       if (p === fencedBlock) fencedBlock = false
