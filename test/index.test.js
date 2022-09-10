@@ -1,14 +1,14 @@
-import { expect, describe, it } from 'vitest'
+import { expect, describe, test } from 'vitest'
 import { starkdown } from '../src'
 
 describe('paragraphs', () => {
-  it('creates single paragraphs', () => {
+  test('creates single paragraphs', () => {
     expect(starkdown('Here is a single Paragraph')).toEqual('<p>Here is a single Paragraph</p>')
 
-    expect(starkdown('Here is a\n single Paragraph')).toEqual('<p>Here is a single Paragraph</p>')
+    expect(starkdown('Here is a\n single Paragraph')).toEqual('<p>Here is a\n single Paragraph</p>')
   })
 
-  it('parses two new lines as separate paragraphs', () => {
+  test('parses two new lines as separate paragraphs', () => {
     expect(starkdown('Something with\n\na line break')).toEqual(
       '<p>Something with</p><p>a line break</p>'
     )
@@ -19,21 +19,23 @@ describe('paragraphs', () => {
 
     expect(
       starkdown(
-        '\nHere...\n\n\n \nare...\n\nthree\n \n\nno,\n 4 Paragraphs!\nshould delete single linebreaks'
+        '\nHere...\n\n\n \nare...\n\nthree\n \n\nno,\n 4 Paragraphs!\nshould not delete single linebreaks'
       )
     ).toEqual(
-      '<p>Here...</p><p>are...</p><p>three</p><p>no, 4 Paragraphs! should delete single linebreaks</p>'
+      '<p>Here...</p><p>are...</p><p>three</p><p>no,\n 4 Paragraphs!\nshould not delete single linebreaks</p>'
     )
   })
 
-  it('parses two spaces plus line break as <br />', () => {
+  test('parses two spaces plus line break as <br />', () => {
     expect(starkdown('Something with  \na line break')).toEqual(
       '<p>Something with<br />a line break</p>'
     )
-    expect(starkdown('Something with \na line break')).toEqual('<p>Something with a line break</p>')
+    expect(starkdown('Something with \na line break')).toEqual(
+      '<p>Something with \na line break</p>'
+    )
   })
 
-  it('parses <br /> as <br />', () => {
+  test('parses <br /> as <br />', () => {
     expect(starkdown('Something with<br />a line break')).toEqual(
       '<p>Something with<br />a line break</p>'
     )
@@ -47,31 +49,31 @@ describe('paragraphs', () => {
 })
 
 describe('text formatting', () => {
-  it('parses bold with **', () => {
+  test('parses bold with **', () => {
     expect(starkdown('I **like** tiny libraries')).toEqual(
       '<p>I <strong>like</strong> tiny libraries</p>'
     )
   })
 
-  it('parses bold with __', () => {
+  test('parses bold with __', () => {
     expect(starkdown('I __like__ tiny libraries')).toEqual(
       '<p>I <strong>like</strong> tiny libraries</p>'
     )
   })
 
-  it('parses italics with *', () => {
+  test('parses italics with *', () => {
     expect(starkdown('I *like* tiny libraries')).toEqual('<p>I <em>like</em> tiny libraries</p>')
   })
 
-  it('parses italics with _', () => {
+  test('parses italics with _', () => {
     expect(starkdown('I _like_ tiny libraries')).toEqual('<p>I <em>like</em> tiny libraries</p>')
   })
 
-  it('parses strikethrough with ~~', () => {
+  test('parses strikethrough with ~~', () => {
     expect(starkdown('I ~~like~~ tiny libraries')).toEqual('<p>I <s>like</s> tiny libraries</p>')
   })
 
-  it('parses mixes', () => {
+  test('parses mixes', () => {
     expect(starkdown('_This_ is **easy** to `use`.')).toEqual(
       '<p><em>This</em> is <strong>easy</strong> to <code>use</code>.</p>'
     )
@@ -79,35 +81,35 @@ describe('text formatting', () => {
 })
 
 describe('titles', () => {
-  it('parses H1 titles', () => {
+  test('parses H1 titles', () => {
     expect(starkdown('# I like tiny libraries')).toEqual('<h1>I like tiny libraries</h1>')
   })
 
-  it('parses underlined H1 titles', () => {
+  test('parses underlined H1 titles', () => {
     expect(starkdown('I like tiny libraries\n===')).toEqual('<h1>I like tiny libraries</h1>')
   })
 
-  it('parses H2 titles', () => {
+  test('parses H2 titles', () => {
     expect(starkdown('## I like tiny libraries')).toEqual('<h2>I like tiny libraries</h2>')
   })
 
-  it('parses H3 titles', () => {
+  test('parses H3 titles', () => {
     expect(starkdown('### I like tiny libraries')).toEqual('<h3>I like tiny libraries</h3>')
   })
 
-  it('parses H4 titles', () => {
+  test('parses H4 titles', () => {
     expect(starkdown('#### I like tiny libraries')).toEqual('<h4>I like tiny libraries</h4>')
   })
 
-  it('parses H5 titles', () => {
+  test('parses H5 titles', () => {
     expect(starkdown('##### I like tiny libraries')).toEqual('<h5>I like tiny libraries</h5>')
   })
 
-  it('parses H6 titles', () => {
+  test('parses H6 titles', () => {
     expect(starkdown('###### I like tiny libraries')).toEqual('<h6>I like tiny libraries</h6>')
   })
 
-  it('parses titles with reference links', () => {
+  test('parses titles with reference links', () => {
     expect(
       starkdown(
         '# I like [tiny libraries]\n\n[tiny libraries]: https://github.com/developit/starkdown'
@@ -117,63 +119,91 @@ describe('titles', () => {
 })
 
 describe('links & images', () => {
-  it('parses links', () => {
+  test('parses links', () => {
     expect(starkdown('[starkdown](http://github.com/developit/starkdown)')).toEqual(
       '<p><a href="http://github.com/developit/starkdown">starkdown</a></p>'
     )
   })
 
-  it('parses anchor links', () => {
+  test('parses anchor links', () => {
     expect(starkdown('[Example](#example)')).toEqual('<p><a href="#example">Example</a></p>')
   })
 
-  it('parses images', () => {
-    expect(starkdown('![title](foo.png)')).toEqual('<p><img src="foo.png" alt="title"></p>')
-    expect(starkdown('![](foo.png)')).toEqual('<p><img src="foo.png" alt=""></p>')
+  test('parses images', () => {
+    expect(starkdown('![title](foo.png)')).toEqual('<p><img src="foo.png" alt="title" /></p>')
+    expect(starkdown('![](foo.png)')).toEqual('<p><img src="foo.png" alt="" /></p>')
   })
 
-  it('parses images within links', () => {
+  test('parses images within links', () => {
     expect(starkdown('[![](toc.png)](#toc)')).toEqual(
-      '<p><a href="#toc"><img src="toc.png" alt=""></a></p>'
+      '<p><a href="#toc"><img src="toc.png" alt="" /></a></p>'
     )
     expect(starkdown('[![a](a.png)](#a) [![b](b.png)](#b)')).toEqual(
-      '<p><a href="#a"><img src="a.png" alt="a"></a> <a href="#b"><img src="b.png" alt="b"></a></p>'
+      '<p><a href="#a"><img src="a.png" alt="a" /></a> <a href="#b"><img src="b.png" alt="b" /></a></p>'
     )
   })
 
-  it('parses reference links', () => {
+  test('parses reference links', () => {
     expect(starkdown('\nhello [World]!\n[world]: http://world.com')).toEqual(
       '<p>hello <a href="http://world.com">World</a>!</p>'
     )
   })
 
-  it('parses reference links without creating excessive linebreaks', () => {
+  test('parses reference links without creating excessive linebreaks', () => {
     expect(starkdown('\nhello [World]!\n\n[world]: http://world.com')).toEqual(
       '<p>hello <a href="http://world.com">World</a>!</p>'
+    )
+  })
+
+  test('parses links and images inline (text + link)', () => {
+    expect(
+      starkdown('Go to [github](https://github.com)\n\nAnd check ![](/some-image.png)')
+    ).toEqual(
+      '<p>Go to <a href="https://github.com">github</a></p><p>And check <img src="/some-image.png" alt="" /></p>'
+    )
+  })
+
+  test('parses links and images inline (link + text)', () => {
+    expect(starkdown('[github](https://github.com)!\n\n![](/some-image.png)!')).toEqual(
+      '<p><a href="https://github.com">github</a>!</p><p><img src="/some-image.png" alt="" />!</p>'
+    )
+  })
+
+  test('parses links and images inline (text + link + text)', () => {
+    expect(
+      starkdown('Go to [github](https://github.com)!!\n\nAnd check ![](/some-image.png)!!')
+    ).toEqual(
+      '<p>Go to <a href="https://github.com">github</a>!!</p><p>And check <img src="/some-image.png" alt="" />!!</p>'
+    )
+  })
+
+  test('parses links and images as standalone paragraphs', () => {
+    expect(starkdown('[github](https://github.com)\n\n![](/some-image.png)')).toEqual(
+      '<p><a href="https://github.com">github</a></p><p><img src="/some-image.png" alt="" /></p>'
     )
   })
 })
 
 describe('lists', () => {
-  it('parses an unordered list with *', () => {
+  test('parses an unordered list with *', () => {
     expect(starkdown('* One\n* Two')).toEqual('<ul><li>One</li><li>Two</li></ul>')
   })
 
-  it('parses an unordered list with -', () => {
+  test('parses an unordered list with -', () => {
     expect(starkdown('- One\n- Two')).toEqual('<ul><li>One</li><li>Two</li></ul>')
   })
 
-  it('parses an unordered list with +', () => {
+  test('parses an unordered list with +', () => {
     expect(starkdown('+ One\n+ Two')).toEqual('<ul><li>One</li><li>Two</li></ul>')
   })
 
-  it('parses an unordered list with mixed bullet point styles', () => {
+  test('parses an unordered list with mixed bullet point styles', () => {
     expect(starkdown('+ One\n* Two\n- Three')).toEqual(
       '<ul><li>One</li><li>Two</li><li>Three</li></ul>'
     )
   })
 
-  it('parses an ordered list', () => {
+  test('parses an ordered list', () => {
     expect(starkdown('1. Ordered\n2. Lists\n4. Numbers are ignored')).toEqual(
       '<ol><li>Ordered</li><li>Lists</li><li>Numbers are ignored</li></ol>'
     )
@@ -181,17 +211,17 @@ describe('lists', () => {
 })
 
 describe('code & quotes', () => {
-  it('parses inline code', () => {
+  test('parses inline code', () => {
     expect(starkdown('Here is some code `var a = 1`.')).toEqual(
       '<p>Here is some code <code>var a = 1</code>.</p>'
     )
   })
 
-  it('escapes inline code', () => {
+  test('escapes inline code', () => {
     expect(starkdown('a `<">` b')).toEqual('<p>a <code>&lt;&quot;&gt;</code> b</p>')
   })
 
-  it('parses three backtricks (```) as a code block', () => {
+  test('parses three backtricks (```) as a code block', () => {
     expect(starkdown('```\nfunction codeBlocks() {\n\treturn "Can be inserted";\n}\n```')).toEqual(
       '<pre class="code "><code>function codeBlocks() {\n\treturn &quot;Can be inserted&quot;;\n}</code></pre>'
     )
@@ -203,58 +233,62 @@ describe('code & quotes', () => {
     )
   })
 
-  it('parses tabs as a code poetry block', () => {
+  test('parses tabs as a code poetry block', () => {
     expect(starkdown('\tvar a = 1')).toEqual(
       '<pre class="code poetry"><code>var a = 1</code></pre>'
     )
   })
 
-  it('escapes code/quote blocks', () => {
+  test('escapes code/quote blocks', () => {
     expect(starkdown('```\n<foo>\n```')).toEqual(
       '<pre class="code "><code>&lt;foo&gt;</code></pre>'
     )
     expect(starkdown('\t<foo>')).toEqual('<pre class="code poetry"><code>&lt;foo&gt;</code></pre>')
   })
 
-  it('parses a block quote', () => {
+  test('parses a block quote', () => {
     expect(starkdown('> To be or not to be')).toEqual('<blockquote>To be or not to be</blockquote>')
   })
 
-  it('parses lists within block quotes', () => {
-    expect(starkdown('> - one\n> - two\n> - **three**\nhello')).toEqual(
-      '<blockquote><ul><li>one</li><li>two</li><li><strong>three</strong></li></ul></blockquote><p>hello</p>'
+  test('parses lists within block quotes', () => {
+    expect(starkdown('> - one\n> - two\n> - **three**')).toEqual(
+      '<blockquote><ul><li>one</li><li>two</li><li><strong>three</strong></li></ul></blockquote>'
     )
   })
 
-  it("won't make paragraphs in code blocks", () => {
+  test("won't make paragraphs in code blocks", () => {
     expect(
-      starkdown(
-        'Hi\n```\n\n\nfunction codeBlocks() {\n\n\treturn "Can be inserted";\n\n}\n\n```\nhello\n\nStark'
-      )
+      starkdown('```\n\n\nfunction codeBlocks() {\n\n\treturn "Can be inserted";\n\n}\n\n```')
     ).toEqual(
-      '<p>Hi</p><pre class="code "><code>function codeBlocks() {\n\n\treturn &quot;Can be inserted&quot;;\n\n}</code></pre><p>hello</p><p>Stark</p>'
+      '<pre class="code "><code>function codeBlocks() {\n\treturn &quot;Can be inserted&quot;;\n}</code></pre>'
     )
   })
 })
 
-describe('horizontal rules', () => {
-  it('should parse ---', () => {
-    expect(starkdown('---')).toEqual('<hr />')
-    expect(starkdown('foo\n\n---\n\nbar')).toEqual('<p>foo</p><hr /><p>bar</p>')
-    expect(starkdown('foo\n\n---\nbar')).toEqual('<p>foo</p><hr /><p>bar</p>')
-    expect(starkdown('foo\n\n----\nbar'), '----').toEqual('<p>foo</p><hr /><p>bar</p>')
-    expect(starkdown('> foo\n\n---\nbar')).toEqual('<blockquote>foo</blockquote><hr /><p>bar</p>')
+describe('<hr />', () => {
+  test('should parse ---', () => {
+    expect(starkdown('\n\n---\n\n')).toEqual('<hr />')
+    expect(starkdown('foo\n\n------\n\nbar')).toEqual('<p>foo</p><hr /><p>bar</p>')
   })
 
-  it('should parse * * *', () => {
-    expect(starkdown('foo\n* * *\nbar')).toEqual('<p>foo</p><hr /><p>bar</p>')
-    expect(starkdown('foo\n* * * *\nbar'), '* * * *').toEqual('<p>foo</p><hr /><p>bar</p>')
-    expect(starkdown('> foo\n\n* * *\nbar')).toEqual('<blockquote>foo</blockquote><hr /><p>bar</p>')
+  test('should parse --- in a >', () => {
+    expect(starkdown('> foo\n\n---\n\nbar')).toEqual('<blockquote>foo</blockquote><hr /><p>bar</p>')
+  })
+
+  test('should parse * * *', () => {
+    expect(starkdown('foo\n\n* * *\n\nbar')).toEqual('<p>foo</p><hr /><p>bar</p>')
+    expect(starkdown('foo\n\n* * * *\n\nbar'), '* * * *').toEqual('<p>foo</p><hr /><p>bar</p>')
+  })
+
+  test('should parse * * * in a >', () => {
+    expect(starkdown('> foo\n\n* * *\n\nbar')).toEqual(
+      '<blockquote>foo</blockquote><hr /><p>bar</p>'
+    )
   })
 })
 
 describe('edge cases', () => {
-  it('should close unclosed tags', () => {
+  test('should close unclosed tags', () => {
     expect(starkdown('*foo')).toEqual('<p><em>foo</em></p>')
     expect(starkdown('foo**')).toEqual('<p>foo<strong></strong></p>')
     expect(starkdown('[some **bold text](#winning)')).toEqual(
@@ -263,7 +297,7 @@ describe('edge cases', () => {
     expect(starkdown('`foo')).toEqual('<p>`foo</p>')
   })
 
-  it('should not choke on single characters', () => {
+  test('should not choke on single characters', () => {
     expect(starkdown()).toEqual('')
     expect(starkdown('')).toEqual('')
     expect(starkdown('*')).toEqual('*')
@@ -276,7 +310,7 @@ describe('edge cases', () => {
 })
 
 describe('tables', () => {
-  it('should parse content', () => {
+  test('should parse content', () => {
     expect(starkdown('| a | hallo welt | c |')).toEqual(
       '<table><tr><td>a</td><td>hallo welt</td><td>c</td></tr></table>'
     )
@@ -290,7 +324,7 @@ describe('tables', () => {
     expect(starkdown('| a')).toEqual('<table><tr><td>a</td></tr></table>')
   })
 
-  it('should parse header', () => {
+  test('should parse header', () => {
     expect(starkdown('| a | hallo welt | c |\n| ---')).toEqual(
       '<table><tr><th>a</th><th>hallo welt</th><th>c</th></tr></table>'
     )
@@ -299,7 +333,7 @@ describe('tables', () => {
     )
   })
 
-  it('should allow inline styles', () => {
+  test('should allow inline styles', () => {
     expect(starkdown('| [Example](#example) | **strong** |')).toEqual(
       '<table><tr><td><a href="#example">Example</a></td><td><strong>strong</strong></td></tr></table>'
     )
@@ -315,31 +349,68 @@ describe('tables', () => {
 })
 
 describe('fenced divs (notes)', () => {
-  it('parses three colons (:::) as fenced divs', () => {
+  test('parses three colons (:::) as fenced divs', () => {
     expect(starkdown(':::\ninfo\n:::')).toEqual('<div class="fenced ">info</div>')
   })
-  it('fenced div with custom class', () => {
+  test('fenced div with custom class', () => {
     expect(starkdown('::: info\ninfo\n:::')).toEqual('<div class="fenced info">info</div>')
   })
 })
 
 describe('html', () => {
-  it('should not parse inside tags', () => {
+  test('should not parse a block tag', () => {
     expect(starkdown('<div title="I **don\'t** parse"></div>')).toEqual(
       '<div title="I **don\'t** parse"></div>'
     )
-    expect(starkdown('hello\n<div title="I **don\'t** parse"></div>')).toEqual(
-      '<p>hello</p><div title="I **don\'t** parse"></div>'
-    )
-    expect(starkdown('hello\n<div title="I **don\'t** parse"></div>\nhello\n')).toEqual(
-      '<p>hello</p><div title="I **don\'t** parse"></div><p>hello</p>'
-    )
+  })
+  test('should add a <p> around an anchor tag', () => {
     expect(starkdown('<a class="_b" target="_blank">a</a>')).toEqual(
       '<p><a class="_b" target="_blank">a</a></p>'
     )
   })
 
-  it('should parse outside HTML tags', () => {
+  test('should parse outside HTML tags', () => {
     expect(starkdown('<a>**a**</a>')).toEqual('<p><a><strong>a</strong></a></p>')
+  })
+})
+
+describe('too few linebreaks around blocks', () => {
+  test('1 linebreak around >', () => {
+    expect(starkdown('hi\n> - one\n> - two\n> - **three**\nhello')).toEqual(
+      '<p>hi</p><blockquote><ul><li>one</li><li>two</li><li><strong>three</strong></li></ul></blockquote><p>hello</p>'
+    )
+  })
+
+  test('1 linebreak around :::', () => {
+    expect(starkdown('hi\n:::\ninfo\n:::\nhi')).toEqual(
+      '<p>hi</p><div class="fenced ">info</div><p>hi</p>'
+    )
+  })
+
+  test('1 linebreak around ```', () => {
+    expect(
+      starkdown(
+        'Hi\n```\n\n\nfunction codeBlocks() {\n\n\treturn "Can be inserted";\n\n}\n\n```\nhello\n\nStark'
+      )
+    ).toEqual(
+      '<p>Hi</p><pre class="code "><code>function codeBlocks() {\n\treturn &quot;Can be inserted&quot;;\n}</code></pre><p>hello</p><p>Stark</p>'
+    )
+  })
+  test('1 linebreak around <div>', () => {
+    expect(starkdown('hello\n<div title="I **don\'t** parse"></div>\nhello\n')).toEqual(
+      `<p>hello\n<div title="I **don't** parse"></div>\nhello</p>`
+    )
+  })
+  test('1 linebreak around ---', () => {
+    expect(starkdown('\n---\n')).toEqual('<hr />')
+    expect(starkdown('foo\n\n---\nbar')).toEqual('<p>foo</p><hr /><p>bar</p>')
+    expect(starkdown('foo\n\n----\nbar')).toEqual('<p>foo</p><hr /><p>bar</p>')
+    expect(starkdown('> foo\n\n---\nbar')).toEqual('<blockquote>foo</blockquote><hr /><p>bar</p>')
+  })
+
+  test('1 linebreak around * * *', () => {
+    expect(starkdown('foo\n* * *\nbar')).toEqual('<p>foo</p><hr /><p>bar</p>')
+    expect(starkdown('foo\n* * * *\nbar'), '* * * *').toEqual('<p>foo</p><hr /><p>bar</p>')
+    expect(starkdown('> foo\n\n* * *\nbar')).toEqual('<blockquote>foo</blockquote><hr /><p>bar</p>')
   })
 })

@@ -11,10 +11,11 @@ npm i starkdown
 
 ## Motivation
 
-It is a continuation on [Snarkdown](https://github.com/developit/snarkdown), which had stopped development at 1kb, but doesn't include support for tables and fenced divs.
+It is a continuation on [Snarkdown](https://github.com/developit/snarkdown), which had stopped development at 1kb, but doesn't include support for paragraphs, tables and fenced divs.
 
 Starkdown adds these additional enhancements:
 
+- [Paragraphs](#paragraphs)
 - [Tables](#tables)
 - [Fenced Divs](#fenced-divs)
 
@@ -32,7 +33,43 @@ console.log(html);
 
 Your html looks like
 ```html
-<em>This</em> is <strong>easy</strong> to <code>use</code>.
+<p><em>This</em> is <strong>easy</strong> to <code>use</code>.</p>
+```
+
+### Paragraphs
+
+With most Markdown implementations, paragraphs are wrapped in `<p>` tags. With Starkdown, this is no different. 
+
+- All paragraphs and "inline" elements are wrapped in a `<p>` tags
+(See [List of "inline" elements](https://developer.mozilla.org/en-US/docs/Web/HTML/Inline_elements#list_of_inline_elements) on MDN)
+  - Eg. a standalone image will still be wrapped in a `<p>` tag, because it's an inline element.
+- All non-inline elements will not be wrapped in `<p>` tags
+  - Eg. a table will not be wrapped in a `<p>` tag.
+
+```md
+[github](https://github.com)
+
+![](/some-image.png)
+```
+
+converts to
+
+```html
+<p><a href="https://github.com">github</a></p><p><img src="/some-image.png" /></p>
+```
+
+But also, when just using images and links:
+
+```md
+[github](https://github.com)
+
+![](/some-image.png)
+```
+
+converts to
+
+```html
+<p><a href="https://github.com">github</a></p><p><img src="/some-image.png" /></p>
 ```
 
 ### Tables

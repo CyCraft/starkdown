@@ -28,10 +28,12 @@ function encodeAttr(str: string): string {
   return (str + '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
 
-/** Parse Markdown into an HTML String. */
-function parse(md: string, options?: { links?: Record<string, string>; paragraphise?: boolean }) {
-  const { links = {}, paragraphise = true } = options || {}
-
+/** Parse a single Markdown paragraph into an HTML String. */
+function parseParagraph(
+  md: string,
+  /** Shared cache on anchor links to support reference/footer links */
+  links: Record<string, string>
+): string {
   const tokenizer =
     /((?:^|\n*)(?:\n?---+|\* \*(?: \*)+)\n*)|(?:^``` *(\w*)\n([\s\S]*?)\n```$)|((?:(?:^|\n+)(?:\t|  {2,}).+)+\n*)|((?:(?:^|\n)([>*+-]|\d+\.)\s+.*)+)|(?:!\[([^\]]*?)\]\(([^)]+?)\))|(\[)|(\](?:\(([^)]+?)\))?)|(?:(?:^|\n+)([^\s].*)\n(-{3,}|={3,})(?:\n+|$))|(?:(?:^|\n+)(#{1,6})\s*(.+)(?:\n+|$))|(?:`([^`].*?)`)|( {2}\n\n*|\n{2,}|__|\*\*|[_*]|~~)|((?:(?:^|\n+)(?:\|.*))+)|(?:^::: *(\w*)\n([\s\S]*?)\n:::$)|<[^>]+>/gm
 
@@ -91,7 +93,7 @@ function parse(md: string, options?: { links?: Record<string, string>; paragraph
       if (t.match(/\./)) {
         token[5] = token[5].replace(/^\d+/gm, '')
       }
-      inner = parse(outdent(token[5].replace(/^\s*[>*+.-]/gm, '')), { paragraphise: false })
+      inner = parseParagraph(outdent(token[5].replace(/^\s*[>*+.-]/gm, '')), links)
       if (t == '>') t = 'blockquote'
       else {
         t = t.match(/\./) ? 'ol' : 'ul'
@@ -101,7 +103,7 @@ function parse(md: string, options?: { links?: Record<string, string>; paragraph
     }
     // Images:
     else if (token[8]) {
-      nextChunk = `<img src="${encodeAttr(token[8])}" alt="${encodeAttr(token[7])}">`
+      nextChunk = `<img src="${encodeAttr(token[8])}" alt="${encodeAttr(token[7])}" />`
     }
     // Links:
     else if (token[10]) {
@@ -116,14 +118,7 @@ function parse(md: string, options?: { links?: Record<string, string>; paragraph
     // Headings:
     else if (token[12] || token[14]) {
       const t = 'h' + (token[14] ? token[14].length : token[13] > '=' ? 1 : 2)
-      nextChunk =
-        '<' +
-        t +
-        '>' +
-        parse(token[12] || token[15], { links, paragraphise: false }) +
-        '</' +
-        t +
-        '>'
+      nextChunk = '<' + t + '>' + parseParagraph(token[12] || token[15], links) + '</' + t + '>'
     }
     // `code`:
     else if (token[16]) {
@@ -148,7 +143,7 @@ function parse(md: string, options?: { links?: Record<string, string>; paragraph
         let j = c.length,
           tr = ''
         while (j--) {
-          tr = (c[j] ? `<${r + parse(c[j].trim(), { paragraphise: false })}</${r}` : '') + tr
+          tr = (c[j] ? `<${r + parseParagraph(c[j].trim(), links)}</${r}` : '') + tr
         }
         table = `<tr>${tr}</tr>` + table
         r = 'td>'
@@ -160,30 +155,54 @@ function parse(md: string, options?: { links?: Record<string, string>; paragraph
       nextChunk = `<div class="fenced ${token[19] || ''}">` + encodeAttr(token[20]) + '</div>'
     }
 
-    if (paragraphise && prevChunk && !prevChunk.startsWith('<') && !isInline(nextChunk)) {
-      out += `<p>${prevChunk
-        .trim()
-        .replace(/([^\n])( ?\n ?)([^\n])/gm, '$1 $3')}</p>${nextChunk.trim()}`
-    } else {
-      out += prevChunk
-      out += nextChunk
-    }
+    out += prevChunk
+    out += nextChunk
   }
 
-  let tail = md.substring(last)
-
-  const oneLiner =
-    (!out.startsWith('<') || isInline(out)) && !out.match(/\n\n/) && !tail.match(/\n\n/)
-
-  if (paragraphise && !oneLiner && tail.trim()) {
-    tail = `<p>${tail.trim().replace(/([^\n])( ?\n ?)([^\n])/gm, '$1 $3')}</p>`
-  }
-
+  const tail = md.substring(last)
   const result = (out + tail + flush()).replace(/^\n+|\n+$/g, '')
 
-  return oneLiner && paragraphise
-    ? `<p>${result.trim().replace(/([^\n])( ?\n ?)([^\n])/gm, '$1 $3')}</p>`
-    : result
+  return result
+}
+
+/** Parse Markdown into an HTML String. */
+function parse(md: string): string {
+  /** Shared cache on anchor links to support reference/footer links */
+  const links: Record<string, string> = {}
+  /** Built out the result in a single string */
+  let result = ''
+
+  const badParagraphSpacingAroundFences = /(?:\r?\n)+(```|:::|-{3,}|\* \* \*(?: \*)*)(?:\r?\n)+/gm
+  const badParagraphSpacingRegexBeforeBlocks = /(\r?\n[^\r\n >].*)(?:\r?\n)(>)/gm
+  const badParagraphSpacingRegexAfterBlocks = /(\r?\n[>] .*)(?:\r?\n)([^\r\n >])/gm
+  const goodParagraphSpacing = `\n${md}\n`
+    .replace(badParagraphSpacingAroundFences, '\n\n$1\n\n')
+    .replace(badParagraphSpacingRegexBeforeBlocks, '$1\n\n$2')
+    .replace(badParagraphSpacingRegexAfterBlocks, '$1\n\n$2')
+
+  const paragraphSplitRegex = / *(?:\r?\n){2,}/gm
+  const paragraphs = goodParagraphSpacing.split(paragraphSplitRegex)
+
+  let fencedBlock: false | string = false
+  const restitchedFencedBlocks = paragraphs.reduce<string[]>((result, p, i) => {
+    if (fencedBlock) {
+      result[result.length - 1] += `\n${p}`
+      if (p === fencedBlock) fencedBlock = false
+      return result
+    }
+    if (/```[A-z]*/.test(p) || /::: ?[A-z]*/.test(p)) fencedBlock = p.slice(0, 3)
+    result.push(p)
+    return result
+  }, [])
+
+  let i = restitchedFencedBlocks.length
+  while (i--) {
+    const part = restitchedFencedBlocks[i]
+    const p = parseParagraph(part, links)
+    result = (p && (!p.startsWith('<') || isInline(p)) ? `<p>${p.trim()}</p>` : p) + result
+  }
+
+  return result
 }
 
 /**
