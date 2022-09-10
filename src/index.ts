@@ -127,11 +127,11 @@ function parseParagraph(
     else if (token[17]) {
       nextChunk = tag(token[17])
       /** When the tag is directly placed in HTML tags, remove extra spaces */
-      if (nextChunk.startsWith(' ') && (out + prevChunk).endsWith('>')) {
+      if (nextChunk && nextChunk.startsWith(' ') && (out + prevChunk).endsWith('>')) {
         nextChunk = nextChunk.slice(1)
       }
       /** When the tag is directly placed in HTML tags, remove extra spaces */
-      if (nextChunk.endsWith(' ') && (out + prevChunk).startsWith('<')) {
+      if (nextChunk && nextChunk.endsWith(' ') && (out + prevChunk).startsWith('<')) {
         nextChunk = nextChunk.slice(0, -1)
       }
     }
