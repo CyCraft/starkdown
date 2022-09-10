@@ -41,13 +41,13 @@ function parse(md: string, options?: { links?: Record<string, string>; paragraph
   let last = 0
   let prevChunk, nextChunk, token, inner
 
-  function tag(token: string) {
-    const desc = TAGS[(token[1] || '') as keyof typeof TAGS]
-    const end = context[context.length - 1] == token
-    if (!desc) return token
+  function tag(_token: string) {
+    const desc = TAGS[(_token[1] || '') as keyof typeof TAGS]
+    const end = context[context.length - 1] == _token
+    if (!desc) return _token
     if (!desc[1]) return desc[0]
     if (end) context.pop()
-    else context.push(token)
+    else context.push(_token)
     // @ts-ignore
     return desc[end | 0]
   }
