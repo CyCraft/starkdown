@@ -20,6 +20,8 @@ Starkdown stays around 1.6kb and adds these additional enhancements:
 - [Fenced Divs](#fenced-divs)
 - [Escaping snake_case words](#escaping-snake_case-words)
 
+Package size wise, compared to other Markdown parsers, it's **8 ~ 18 times smaller!** See the (#package-size-comparison-chart)
+
 ## Usage
 
 Starkdown is really easy to use, a single function which parses a string of Markdown and returns a String of HTML. Couldn't be simpler.
@@ -159,3 +161,7 @@ which will convert to:
 ## Security
 
 **Note on XSS:** Starkdown doesn't sanitize HTML. Please bring your own HTML sanitation for any place where user input will be converted into HTML.
+
+## Package Size Comparison Chart
+
+![Package Size Comparison Chart](./.github/markdown-parsers.jpg)
