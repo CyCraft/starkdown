@@ -1,23 +1,5 @@
-function tag(token: string) {
-  const dic: Record<string, string> = {
-    ' _': ' <em>',
-    '_ ': '</em> ',
-    ' *': ' <em>',
-    '* ': '</em> ',
-    ' __': ' <strong>',
-    '__ ': '</strong> ',
-    ' **': ' <strong>',
-    '** ': '</strong> ',
-    ' ~~': ' <s>',
-    '~~ ': '</s> ',
-    '  \n': '<br />',
-    '---': '<hr />',
-  }
-  return dic[token]
-}
-
 function isInline(tag: string): boolean {
-  const tagName = tag.replace(/^<\/?([a-z]+)[> /].*/, '$1')
+  const tagName = tag.replace(/^<\/?([A-z]+)[> /][.\n\r\t\S\s]*/m, '$1')
   return /^(?:a|abbr|acronym|audio|b|bdi|bdo|big|br|button|canvas|cite|code|data|datalist|del|dfn|em|embed|i|iframe|img|input|ins|kbd|label|map|mark|meter|noscript|object|output|picture|progress|q|ruby|s|samp|script|select|slot|small|span|strong|sub|sup|svg|template|textarea|time|u|tt|var|video|wbr)$/.test(
     tagName
   )
@@ -44,7 +26,7 @@ function parseParagraph(
   links: Record<string, string>
 ): string {
   const tokenizer =
-    /((?:^|\n*)(?:\n?---+|\* \*(?: \*)+)\n*)|(?:^``` *(\w*)\n([\s\S]*?)\n```$)|((?:(?:^|\n+)(?:\t|  {2,}).+)+\n*)|((?:(?:^|\n)([>*+-]|\d+\.)\s+.*)+)|(?:!\[([^\]]*?)\]\(([^)]+?)\))|(\[)|(\](?:\(([^)]+?)\))?)|(?:(?:^|\n+)([^\s].*)\n(-{3,}|={3,})(?:\n+|$))|(?:(?:^|\n+)(#{1,6})\s*(.+)(?:\n+|$))|(?:`([^`].*?)`)|( {2}\n\n*|\n{2,}| __|__ | \*\*|\*\* | [_*]|[_*] | ~~|~~ )|((?:(?:^|\n+)(?:\|.*))+)|(?:(?:^|\n):::(.*)\n+([.\r\n\t\S\s]*?)\n+:::(?:$|\n))|<[^>]+>/gm
+    /((?:^|\n*)(?:\n?---+|\* \*(?: \*)+)\n*)|(?:^``` *(\w*)\n([\s\S]*?)\n```$)|((?:(?:^|\n+)(?:\t|  {2,}).+)+\n*)|((?:(?:^|\n)([>*+-]|\d+\.)\s+.*)+)|(?:!\[([^\]]*?)\]\(([^)]+?)\))|(\[)|(\](?:\(([^)]+?)\))?)|(?:(?:^|\n+)([^\s].*)\n(-{3,}|={3,})(?:\n+|$))|(?:(?:^|\n+)(#{1,6})\s*(.+)(?:\n+|$))|(?:`([^`].*?)`)|( {2}\n)|(\\[_*~])|((?:\*\*)(.*?[^\\])(?:\*\*))|((?:__)(.*?[^\\])(?:__))|(\*([^\\*]|(?:[^*].*?[^\\*]))\*)|(_([^\\_]|(?:[^_].*?[^\\_]))_)|((?:~~)(.*?[^\\])(?:~~))|((?:(?:^|\n+)(?:\|.*))+)|(?:(?:^|\n):::(.*)\n+([.\r\n\t\S\s]*?)\n+:::(?:$|\n))|<[^>]+>/gm
 
   let out = ''
   let last = 0
@@ -56,21 +38,14 @@ function parseParagraph(
       return ''
     })
     .replace(/^\n+|\n+$/g, '')
-    // on each line that `ends in [_*~]` OR `[_*~]<` OR `[_*~]]` add a space at the end
-    .replace(/([^ ][_*~])($|]|<)/gm, '$1 $2')
-    // on each line that `starts in [_*~]` OR `>[_*~]` OR `[[_*~]` add a space at the start
-    .replace(/(^|\[|>)([_*~][^ ])/gm, '$1 $2')
 
   while ((token = tokenizer.exec(md))) {
     prevChunk = md.substring(last, token.index)
     last = tokenizer.lastIndex
     nextChunk = token[0]
 
-    if (prevChunk.match(/[^\\](\\\\)*\\$/)) {
-      // escaped
-    }
     // Code/Indent blocks:
-    else if (token[3] || token[4]) {
+    if (token[3] || token[4]) {
       const t = token[3] || token[4]
       nextChunk =
         '<pre class="code ' +
@@ -121,23 +96,34 @@ function parseParagraph(
     }
     // HRs:
     else if (token[1]) {
-      nextChunk = tag('---')
+      nextChunk = `<hr />`
     }
-    // Inline formatting: *em*, **strong** & friends
+    // BRs:
     else if (token[17]) {
-      nextChunk = tag(token[17])
-      /** When the tag is directly placed in HTML tags, remove extra spaces */
-      if (nextChunk && nextChunk.startsWith(' ') && (out + prevChunk).endsWith('>')) {
-        nextChunk = nextChunk.slice(1)
-      }
-      /** When the tag is directly placed in HTML tags, remove extra spaces */
-      if (nextChunk && nextChunk.endsWith(' ') && (out + prevChunk).startsWith('<')) {
-        nextChunk = nextChunk.slice(0, -1)
-      }
+      nextChunk = `<br />`
+    }
+    // escape \_ & \* & \~     /(\\[_*~])/
+    else if (token[18]) {
+      nextChunk = token[18].slice(1)
+    }
+    // **strong** & __strong__
+    else if (token[19] || token[21]) {
+      const content = parseParagraph(token[20] || token[22], links)
+      nextChunk = `<strong>${content}</strong>`
+    }
+    // *em* & _em_
+    else if (token[23] || token[25]) {
+      const content = parseParagraph(token[24] || token[26], links)
+      nextChunk = `<em>${content}</em>`
+    }
+    // ~~s~~
+    else if (token[27] || token[28]) {
+      const content = parseParagraph(token[28], links)
+      nextChunk = `<s>${content}</s>`
     }
     // Table parser
-    else if (token[18]) {
-      const l = token[18].split('\n')
+    else if (token[29]) {
+      const l = token[29].split('\n')
       let i = l.length,
         table = '',
         r = 'td>'
@@ -159,9 +145,9 @@ function parseParagraph(
       nextChunk = `<table>${table}</table>`
     }
     // Fenced divs:
-    else if (token[20]) {
-      const classes = `fenced ${token[19].trim() || ''}`.trim()
-      const content = parse(token[20], links)
+    else if (token[31]) {
+      const classes = `fenced ${token[30].trim() || ''}`.trim()
+      const content = parse(token[31], links)
       nextChunk = `<div class="${classes}">${content}</div>`
     }
 
@@ -221,7 +207,6 @@ function parse(
  * Parse Markdown into an HTML String
  */
 export function starkdown(md: string): string {
-  if (!md) return ''
-  if (md.length < 3) return md
+  if (!md) return `<p></p>`
   return parse(md)
 }

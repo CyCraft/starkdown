@@ -18,7 +18,7 @@ Starkdown stays around 1.6kb and adds these additional enhancements:
 - [Paragraphs](#paragraphs)
 - [Tables](#tables)
 - [Fenced Divs](#fenced-divs)
-- [Formating done Right](#formating-done-right)
+- [Escaping snake_case words](#escaping-snake_case-words)
 
 ## Usage
 
@@ -130,25 +130,31 @@ converts to
 <div class="fenced info"><p>this is some info</p></div>
 ```
 
-### Formating done Right
+### Escaping snake_case words
 
-You need to pad your formatting with spaces in order to correctly convert sentences like these:
+You need to escape your formatting with `\` in order to correctly convert sentences like these:
 
 ```md
 snake_case is _so-so_
 ```
 
-correctly converts to
+will convert to:
 
 ```html
-<!-- in this library -->
-<p>snake_case is <em>so-so</em></p>
-
-<!-- but in Snarkdown... -->
-snake<em>case is </em>so-so<em></em>
+<p>snake<em>case is </em>so-so</p>
 ```
 
-I have greatly simplified the complex logic of Snarkdown and fixed formatting issues like these.
+Instead you should write
+
+```md
+snake\_case is _so-so_
+```
+
+which will convert to:
+
+```html
+<p>snake_case is <em>so-so</em></p>
+```
 
 ## Security
 
