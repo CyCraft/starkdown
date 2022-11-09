@@ -20,7 +20,7 @@ Starkdown stays around 1.6kb and adds these additional enhancements:
 - [Fenced Divs](#fenced-divs)
 - [Escaping snake_case words](#escaping-snake_case-words)
 
-Package size wise, compared to other Markdown parsers, it's **8 ~ 18 times smaller!** See the (#package-size-comparison-chart)
+Package size wise, compared to other Markdown parsers, it's **8 ~ 18 times smaller!** See the [Package Size Comparison Chart](#package-size-comparison-chart)
 
 ## Usage
 
