@@ -257,6 +257,27 @@ describe('links & images', () => {
       '<p><a href="https://github.com">github</a></p><p><img src="/some-image.png" alt="" /></p>'
     )
   })
+
+  test('parses links with attribute lists', () => {
+    expect(starkdown('[github](https://github.com){:target="_blank"}')).toEqual(
+      '<p><a href="https://github.com" target="_blank">github</a></p>'
+    )
+    expect(starkdown('[github](https://github.com){:.foo .bar}')).toEqual(
+      '<p><a href="https://github.com" class="foo bar">github</a></p>'
+    )
+    expect(starkdown('[github](https://github.com){:#foo}')).toEqual(
+      '<p><a href="https://github.com" id="foo">github</a></p>'
+    )
+    expect(starkdown('[github](https://github.com){:target="_blank" .foo .bar}')).toEqual(
+      '<p><a href="https://github.com" target="_blank" class="foo bar">github</a></p>'
+    )
+    expect(starkdown('[github](https://github.com){:target="_blank" #foo}')).toEqual(
+      '<p><a href="https://github.com" target="_blank" id="foo">github</a></p>'
+    )
+    expect(starkdown('[github](https://github.com){:target="_blank" .foo .bar #foo}')).toEqual(
+      '<p><a href="https://github.com" target="_blank" class="foo bar" id="foo">github</a></p>'
+    )
+  })
 })
 
 describe('lists', () => {

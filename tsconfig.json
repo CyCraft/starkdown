@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "module": "esnext",
-    "target": "es2019",
+    "target": "ESNext",
     "lib": ["esnext", "DOM"],
     "strict": true,
     "moduleResolution": "node",
