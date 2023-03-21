@@ -446,6 +446,11 @@ describe('fenced divs (notes)', () => {
       '<div class="fenced info-card mt-md c-font-def"><p>info</p></div>'
     )
   })
+  test('fenced div without initial space', () => {
+    expect(starkdown(':::info-card mt-md\ninfo\n:::')).toEqual(
+      '<div class="fenced info-card mt-md"><p>info</p></div>'
+    )
+  })
   test('fenced div with Markdown', () => {
     expect(starkdown(':::\n**info**\n:::')).toEqual(
       '<div class="fenced"><p><strong>info</strong></p></div>'
