@@ -3,16 +3,23 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   build: {
+    sourcemap: true,
+    emptyOutDir: true,
     lib: {
-      formats: ['cjs','es','iife','umd'],
+      formats: ['cjs','es'],
       // Could also be a dictionary or array of multiple entry points
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'starkdown',
       // the proper extensions will be added
-      fileName: 'starkdown',
+      fileName: (type,name) => `${name}.${type === 'cjs' ? 'cjs' : 'js'}`,
     },
     rollupOptions: {
       treeshake: true,
+      output: {
+        inlineDynamicImports: false,
+        compact: true,
+        preserveModules: true,
+      }
     },
   },
   test: {
