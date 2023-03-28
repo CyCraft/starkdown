@@ -1,5 +1,5 @@
 import type { ParseData, ParserDef } from './types'
-import { compileTokens, isInline } from './utils'
+import { compileTokens, createParseData, isInline } from './utils'
 
 export const createTokenizerParser = (parsers: ParserDef[]) => {
   const tokens: Map<string, ParserDef> = new Map(parsers.map((x) => [x.name, x]))
@@ -19,7 +19,7 @@ export const createTokenizerParser = (parsers: ParserDef[]) => {
     while (i < str.length) {
       const val = parseNext(str, i)
       if (val[1] !== i) {
-        yield [str.slice(i, val[1]), i, val[1]]
+        yield createParseData(str.slice(i, val[1]), i, val[1])
       }
       i = val[2]
       yield val
@@ -54,7 +54,7 @@ export const createTokenizerParser = (parsers: ParserDef[]) => {
       ...tokenizerResult,
     })
 
-    return Array.isArray(value) ? value : [value, startIndex + index, lastIndex, groups]
+    return Array.isArray(value) ? value : createParseData(value, startIndex + index, lastIndex, groups)
   }
 
   /** Parse a single Markdown paragraph into an HTML String. */
