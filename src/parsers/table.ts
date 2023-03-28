@@ -1,5 +1,5 @@
 import { ParseData, ParserDef } from '../types'
-import { until, wrap } from '../utils'
+import { createParseData, until, wrap } from '../utils'
 const TABLE = Symbol('table')
 
 export const table: ParserDef = {
@@ -23,11 +23,11 @@ export const table: ParserDef = {
         row.map((x) => wrap(i === 0 && hasHeading ? 'th' : 'td', parseParagraph(x)))
       )
     )
-    return [
+    return createParseData(
       wrap('table', html),
       index,
       lastIndex + (tableParse.at(-1)?.[2] ?? 0),
       { cells, hasHeading, [TABLE]: true },
-    ]
+    )
   },
 }

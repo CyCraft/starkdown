@@ -1,5 +1,5 @@
 import { ParserDef } from '../types'
-import { until, attrs, parseAttrList } from '../utils'
+import { until, attrs, parseAttrList, createParseData } from '../utils'
 const LINK_END = Symbol('isLinkEnd')
 
 export const link: ParserDef = {
@@ -13,11 +13,11 @@ export const link: ParserDef = {
     const endIndex = contentRaw.at(-1)?.[2] ?? 0
     const end = parseNext(src, index + endIndex)
     const { ial: al, ...attr } = (end[3] as Record<string, string>) ?? {}
-    return [
+    return createParseData(
       `<a${attrs(attr ?? {})}${parseAttrList(al)}>${content}</a>`,
       index,
       end[2],
       { content, ...end[3], [LINK_END]: false },
-    ]
+    )
   },
 }

@@ -1,5 +1,5 @@
 import { escape } from './parsers/escape'
-import { boldItalicsStrikethrough } from './parsers/boldItalicsStrikethrough'
+import { bis } from './parsers/boldItalicsStrikethrough'
 import { codeblock } from './parsers/codeblock'
 import { fencedDiv } from './parsers/fencedDiv'
 import { hashHeading } from './parsers/hashHeading'
@@ -15,7 +15,6 @@ import { table } from './parsers/table'
 import { ul } from './parsers/ul'
 import { underlineHeading } from './parsers/underlineHeading'
 import { poetry } from './parsers/poetry'
-import { referenceLinks } from './parsers/referenceLinks'
 
 export const defaultParsers = [
   escape,
@@ -25,14 +24,13 @@ export const defaultParsers = [
   ol,
   quote,
   image,
-  referenceLinks,
   link,
   poetry,
   underlineHeading,
   hashHeading,
   inlineCode,
   newLine,
-  boldItalicsStrikethrough,
+  bis,
   table,
   fencedDiv,
   html,

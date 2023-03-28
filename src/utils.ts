@@ -1,16 +1,23 @@
-import { ParserDef, ParserFunction } from "./types";
+import { ParseData, ParserDef } from './types'
+
+export const createParseData = <T>(
+  value: string | string[],
+  index: number,
+  lastIndex: number,
+  data?: T
+): ParseData => (data ? [value, index, lastIndex,data] : [value, index, lastIndex]) as ParseData
 
 /** Outdent a string based on the first indented line's leading whitespace
  *	@private
  */
 export function outdent(str: string): string {
-  return str.replace(RegExp('^' + (str.match(/^([\t ])+/) || '')[0], 'gm'), '');
+  return str.replace(RegExp('^' + (str.match(/^([\t ])+/) || '')[0], 'gm'), '')
 }
 /** Encode special attribute characters to HTML entities in a String.
  *	@private
  */
 export function encodeAttr(str: string): string {
-  return (str + '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return (str + '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
 
 export const wrap = (el: string, inner: string | string[]) =>
@@ -47,7 +54,10 @@ export function isInline(tag: string): boolean {
   )
 }
 
-export function* until<T>(iter: Iterable<T>, fn: (x: T, i: number) => unknown): IterableIterator<T> {
+export function* until<T>(
+  iter: Iterable<T>,
+  fn: (x: T, i: number) => unknown
+): IterableIterator<T> {
   let i = 0
   for (const item of iter) {
     if (fn(item, i++)) break
@@ -66,7 +76,7 @@ export function attrs(attrs: Record<string, string>) {
 
 export const compileTokens = (tokens: Map<string, Omit<ParserDef, 'name'>>) => {
   const regexParts: string[] = []
-  for (const [name, {regex}] of tokens) {
+  for (const [name, { regex }] of tokens) {
     regexParts.push(
       `(?:${regex.source.replace(/\\k<([^>]+?)>/giu, `\\k<${name}__$1>`)})`.replace(
         /\(\?<((?:[^=!])[^>]*?)>/giu,

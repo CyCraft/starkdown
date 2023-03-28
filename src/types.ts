@@ -1,7 +1,7 @@
-type MaybeProvider<T> = T | (() => T)
+type MaybeArray<T> = T | T[]
 
 export type ParseData = [
-  result: MaybeProvider<(string | string[])>,
+  result: MaybeArray<string>,
   startIndex: number,
   stopIndex: number,
   data?: Record<string | symbol, unknown>
@@ -18,12 +18,6 @@ export type ParserFunction = (
     parseNext: (str:string, start:number) => ParseData
     parseIter: (str:string) => IterableIterator<ParseData>,
     parse: (str:string) => string,
-    store: {
-      upsert: <T = unknown>(key: string, opts: {update?: (oldVal: T, k: string) => T, insert?: (k:string) => T }) => T
-      get: <T = unknown> (key: string) => T | null
-      remove: (key: string) => boolean
-      has: (key: string) => boolean
-    }
   }
 ) => string | ParseData
 

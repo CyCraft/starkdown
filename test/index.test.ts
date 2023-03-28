@@ -174,14 +174,6 @@ describe('titles', () => {
   test('parses H6 titles', () => {
     expect(starkdown('###### I like tiny libraries')).toEqual('<h6>I like tiny libraries</h6>')
   })
-
-  test('parses titles with reference links', () => {
-    expect(
-      starkdown(
-        '# I like [tiny libraries]\n\n[tiny libraries]: https://github.com/developit/starkdown'
-      )
-    ).toEqual('<h1>I like <a href="https://github.com/developit/starkdown">tiny libraries</a></h1>')
-  })
 })
 
 describe('links & images', () => {
@@ -215,18 +207,6 @@ describe('links & images', () => {
     )
     expect(starkdown('[![a](a.png)](#a) [![b](b.png)](#b)')).toEqual(
       '<p><a href="#a"><img src="a.png" alt="a" /></a> <a href="#b"><img src="b.png" alt="b" /></a></p>'
-    )
-  })
-
-  test('parses reference links', () => {
-    expect(starkdown('\nhello [World]!\n[world]: http://world.com')).toEqual(
-      '<p>hello <a href="http://world.com">World</a>!</p>'
-    )
-  })
-
-  test('parses reference links without creating excessive linebreaks', () => {
-    expect(starkdown('\nhello [World]!\n\n[world]: http://world.com')).toEqual(
-      '<p>hello <a href="http://world.com">World</a>!</p>'
     )
   })
 

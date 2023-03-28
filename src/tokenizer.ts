@@ -2,50 +2,17 @@ import type { ParseData, ParserDef } from './types'
 import { compileTokens, isInline } from './utils'
 
 export const createTokenizerParser = (parsers: ParserDef[]) => {
-  const tokens: Map<string, Omit<ParserDef, 'name'>> = new Map(
-    parsers.map(({ name, ...rest }) => [name, rest])
-  )
+  const tokens: Map<string, ParserDef> = new Map(parsers.map((x) => [x.name, x]))
   const tokenizer = compileTokens(tokens)
-  const store = new Map<string, unknown>()
 
   const tokenizerResult = {
     parse,
     parseIter,
     parseNext,
     parseParagraph,
-    store: {
-      upsert,
-      get: store.get.bind(store) as <T = unknown>(key:string) => T,
-      remove: store.delete.bind(store),
-      has: store.has.bind(store)
-    },
   }
 
   return tokenizerResult
-
-  function upsert<T = unknown>(
-    key: string,
-    {
-      update,
-      insert,
-    }: {
-      update?: (oldVal: T, key: string) => T
-      insert?: (key: string) => T
-    } = {}
-  ):T {
-    const exists = store.has(key)
-    const oldVal = store.get(key)
-    let newVal = undefined;
-
-    if (exists && update) {
-      newVal = update(oldVal as T, key)
-    }
-    if(!exists && insert) {
-      newVal = insert(key)
-    }
-    store.set(key, newVal)
-    return newVal as T
-  }
 
   function* parseIter(str: string): IterableIterator<ParseData> {
     let i = 0
@@ -78,7 +45,7 @@ export const createTokenizerParser = (parsers: ParserDef[]) => {
 
     const lastIndex = startIndex + index + length
     const [name] = nonEmptyGroups[0][0].split('__')
-    const { handler } = tokens.get(name) as Omit<ParserDef, 'name'>
+    const { handler } = tokens.get(name) as ParserDef
     const value = handler(groups, {
       index: startIndex + index,
       src,
@@ -94,8 +61,6 @@ export const createTokenizerParser = (parsers: ParserDef[]) => {
   function parseParagraph(md: string): string {
     return [...parseIter(md)]
       .map(([x]) => x)
-      .flat(Infinity)
-      .map(x=>typeof x === 'function' ? x() : x)
       .flat(Infinity)
       .join('')
   }

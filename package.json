@@ -21,10 +21,8 @@
     "dist"
   ],
   "scripts": {
-    "build:vite": "vite build",
-    "dev:vite": "vite watch",
-    "build": "microbundle",
-    "dev": "microbundle watch",
+    "build": "vite build",
+    "dev": "vite watch",
     "lint": "tsc --noEmit && eslint ./src --ext .ts",
     "test": "vitest run",
     "test:ui": "vitest --ui",

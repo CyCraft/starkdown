@@ -14,7 +14,7 @@ export default defineConfig({
       fileName: (type,name) => `${name}.${type === 'cjs' ? 'cjs' : 'js'}`,
     },
     rollupOptions: {
-      treeshake: true,
+      treeshake: 'smallest',
       output: {
         inlineDynamicImports: false,
         compact: true,
