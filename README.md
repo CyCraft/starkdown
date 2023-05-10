@@ -3,7 +3,7 @@
 <a href="https://www.npmjs.com/package/starkdown"><img src="https://img.shields.io/npm/v/starkdown.svg" alt="Total Downloads"></a>
 <a href="https://www.npmjs.com/package/starkdown"><img src="https://img.shields.io/npm/dw/starkdown.svg" alt="Latest Stable Version"></a>
 
-Starkdown is a Tiny <2kb Markdown parser written, almost as fast and smart as Tony Stark.
+Starkdown is a Tiny <4kb Markdown parser written, almost as fast and smart as Tony Stark.
 
 ```sh
 npm i starkdown
@@ -28,10 +28,20 @@ Starkdown is really easy to use, a single function which parses a string of Mark
 
 ```js
 import { starkdown } from 'starkdown'
+import { defaultParsers } from 'starkdown/es/defaultParsers'
+import { escape, boldItalicsStrikethrough, codeblocks, inlineCode, quote } from 'starkdown/es/parsers'
 
-const md = '_This_ is **easy** to `use`.'
-const html = starkdown(md)
-console.log(html)
+const str = '_This_ is **easy** to `use`.'
+
+// implicitly uses defaultParsers
+const old = starkdown(str)
+
+// this will parse the string without the table tokeniser
+const withOptions = starkdown(str, { plugins: [defaultParsers.filter(x=>x.name !== 'table')] })
+
+// you can also just do a la carte
+const discordEsqueMD = [escape, boldItalicsStrikethrough, codeblock, inlineCode, quote]
+const discordLike = starkdown(str, { plugins: discordEsqueMD })
 ```
 
 The html returned will look like:
@@ -42,7 +52,7 @@ The html returned will look like:
 
 ### Paragraphs
 
-With most Markdown implementations, paragraphs are wrapped in `<p>` tags. With Starkdown, this is no different. 
+With most Markdown implementations, paragraphs are wrapped in `<p>` tags. With Starkdown, this is no different.
 
 - All paragraphs and "inline" elements are wrapped in a `<p>` tags
 (See [List of "inline" elements](https://developer.mozilla.org/en-US/docs/Web/HTML/Inline_elements#list_of_inline_elements) on MDN)
@@ -90,6 +100,31 @@ converts to
 
 ```html
 <h3>Usage</h3><pre class="code js"><code class="language-js">const a = 1</code></pre>
+```
+
+### Links
+Usual markdown for links works, i.e
+
+```md
+[github](https://github.com)
+```
+
+becomes
+
+```html
+<p><a href="https://github.com">github</a></p>
+```
+
+But you can also add properties and classes to links using attribute lists like so:
+
+```md
+[github](https://github.com){:target="_blank" .foo .bar #baz}
+```
+
+becomes
+
+```html
+<p><a href="https://github.com" target="_blank" class="foo bar" id="baz">github</a></p>
 ```
 
 ### Tables
@@ -157,6 +192,54 @@ which will convert to:
 ```html
 <p>snake_case is <em>so-so</em></p>
 ```
+
+## Custom Parsers
+
+Parsers are defined as objects that match the following typescript definition
+```ts
+export type ParserDef = {
+  // must be a unique name
+  name: string,
+  // regex must contain at least 1 named capture group,. these are parsed to as the vars in the ParserFunction
+  regex: RegExp,
+  handler: ParserFunction,
+}
+
+export type ParserFunction = (
+  // Capture groups are here
+  vars: Record<string, string>,
+  state: {
+    // index of the token
+    index: number
+    // source string
+    src: string
+    // length of match
+    length: number
+    // index of the last char of match, (equal to index + length)
+    lastIndex: number
+    // for recursive parsing of tokens
+    parseParagraph: (str:string) => string
+    parseNext: (str:string, start:number) => ParseData
+    parseIter: (str:string) => IterableIterator<ParseData>,
+    parse: (str:string) => string,
+  }
+  // if a string is returned, it is transformed into parseData using the index and lastIndex in state
+) => string | ParseData
+
+export type ParseData = [
+  result: string | string[],
+  // Start index of match
+  startIndex: number,
+  // end index of match, this is useful if your end up parsing more than
+  // the tokeniser originally provided
+  stopIndex: number,
+  // any data you wish to forward can be included here for later parsers to use
+  data?: Record<string | symbol, unknown>
+]
+```
+
+
+Examples can be found in the [parsers folder](./src/parsers/).
 
 ## Security
 
