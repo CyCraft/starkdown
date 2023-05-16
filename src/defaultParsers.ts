@@ -1,13 +1,12 @@
 import { escape } from './parsers/escape'
 import { bis } from './parsers/boldItalicsStrikethrough'
 import { codeblock } from './parsers/codeblock'
-import { fencedDiv } from './parsers/fencedDiv'
 import { hashHeading } from './parsers/hashHeading'
 import { hr } from './parsers/hr'
 import { html } from './parsers/html'
 import { image } from './parsers/image'
 import { inlineCode } from './parsers/inlineCode'
-import { link } from './parsers/link'
+import { anchor } from './parsers/anchor'
 import { newLine } from './parsers/newLine'
 import { ol } from './parsers/ol'
 import { quote } from './parsers/quote'
@@ -24,7 +23,7 @@ export const defaultParsers = [
   ol,
   quote,
   image,
-  link,
+  anchor,
   poetry,
   underlineHeading,
   hashHeading,
@@ -32,6 +31,5 @@ export const defaultParsers = [
   newLine,
   bis,
   table,
-  fencedDiv,
   html,
 ]

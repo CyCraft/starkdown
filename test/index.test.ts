@@ -1,5 +1,14 @@
 import { expect, describe, test } from 'vitest'
-import { starkdown } from '../src'
+import { starkdown as _starkdown } from '../src'
+import { defaultParsers } from 'src/defaultParsers'
+import { fencedDiv } from 'src/parsers/fencedDiv'
+
+const plugins = [...defaultParsers]
+plugins.splice(-1, 0, fencedDiv) // placing it before html parser
+const starkdown = (str: string) =>
+  _starkdown(str, {
+    plugins,
+  })
 
 describe('ignore special formating as part of words', () => {
   test(`_`, () => {
