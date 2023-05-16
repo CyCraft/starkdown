@@ -1,7 +1,16 @@
 import type { ParseData, ParserDef } from './types'
 import { compileTokens, createParseData, isInline } from './utils'
 
-export const createTokenizerParser = (parsers: ParserDef[]) => {
+/**
+ * @example
+ * export function markdown(md: string): string {
+ *   if (!md) return `<p></p>`
+ *   const plugins = [...defaultParsers, myCustomPlugin]
+ *   const { parse } = createTokenizerParser(plugins)
+ *   return parse(md)
+ * }
+ */
+export function createTokenizerParser(parsers: ParserDef[]) {
   const tokens: Map<string, ParserDef> = new Map(parsers.map((x) => [x.name, x]))
   const tokenizer = compileTokens(tokens)
 

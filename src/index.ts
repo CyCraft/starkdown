@@ -9,11 +9,10 @@ export type StarkdownOpts = {
 /**
  * Parse Markdown into an HTML String
  */
-export function starkdown(
-  md: string,
-  { plugins = [...defaultParsers] }: StarkdownOpts = {}
-): string {
+function starkdown(md: string, { plugins = [...defaultParsers] }: StarkdownOpts = {}): string {
   if (!md) return `<p></p>`
   const { parse } = createTokenizerParser(plugins)
   return parse(md)
 }
+
+export { createTokenizerParser, starkdown }
