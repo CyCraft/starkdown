@@ -1,32 +1,31 @@
 /* eslint-disable tree-shaking/no-side-effects-in-initialization */
 import { resolve } from 'path'
+import dts from 'vite-plugin-dts'
 import { defineConfig } from 'vitest/config'
-
 export default defineConfig({
   build: {
-    sourcemap: true,
-    emptyOutDir: true,
+    minify: false,
     lib: {
       formats: ['cjs', 'es'],
-      // Could also be a dictionary or array of multiple entry points
-      entry: resolve(__dirname, 'src/index.ts'),
-      name: 'starkdown',
-      // the proper extensions will be added
-      fileName: (type, name) =>
-        `${name.includes('parsers') ? 'parsers' : name}.${type === 'cjs' ? 'cjs' : 'js'}`,
+      entry: {
+        index: resolve(__dirname, 'src/index.ts'),
+        parsers: resolve(__dirname, 'src/parsers/index.ts'),
+      },
     },
     rollupOptions: {
-      treeshake: 'smallest',
+      // treeshake: 'smallest',
       output: {
-        chunkFileNames: '[format]/[name].js',
-        inlineDynamicImports: false,
-        compact: true,
-        // preserveModules: true,
-        manualChunks: (id) => {
-          return id.includes('parsers') ? 'parsers' : id.split(/[/\\]/g).at(-1).split('.')[0]
-        },
+        generatedCode: { constBindings: true },
+        chunkFileNames: 'chunks/[format]/[name].js',
+        manualChunks: (id) =>
+          id.includes('/types.ts')
+            ? 'index'
+            : id.includes('parsers')
+            ? 'parsers'
+            : id.split(/[/\\]/g).at(-1).split('.')[0],
       },
     },
   },
   test: {},
+  plugins: [dts()],
 })

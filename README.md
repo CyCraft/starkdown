@@ -199,8 +199,7 @@ Starkdown comes built in with several "parsers" that each are responsible to con
 The list of enabled default parsers can be inspected at [./src/defaultParsers.ts](./src/defaultParsers.ts).
 
 ```js
-import { starkdown } from 'starkdown'
-import { defaultParsers } from 'starkdown/es/defaultParsers'
+import { starkdown, defaultParsers } from 'starkdown'
 
 const str = '_This_ is **easy** to `use`.'
 
@@ -222,13 +221,7 @@ The list of default parsers can be inspected at [./src/defaultParsers.ts](./src/
 
 ```js
 import { createTokenizerParser } from 'starkdown'
-import {
-  escape,
-  boldItalicsStrikethrough,
-  codeblocks,
-  inlineCode,
-  quote,
-} from 'starkdown/es/parsers'
+import { escape, boldItalicsStrikethrough, codeblocks, inlineCode, quote } from 'starkdown/parsers'
 
 const str = '_This_ is **easy** to `use`.'
 
