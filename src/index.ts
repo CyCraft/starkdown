@@ -1,6 +1,6 @@
-import type { ParserDef } from './types'
 import { defaultParsers } from './defaultParsers'
 import { createTokenizerParser } from './tokenizer'
+import type { ParserDef } from './types'
 
 export type StarkdownOpts = {
   plugins?: ParserDef[]

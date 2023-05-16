@@ -1,5 +1,5 @@
 import type { ParserDef } from '../types'
-import { outdent, encodeAttr } from '../utils'
+import { encodeAttr, outdent } from '../utils'
 
 export const codeblock: ParserDef = {
   name: 'codeblock',

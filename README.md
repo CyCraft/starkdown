@@ -29,7 +29,13 @@ Starkdown is really easy to use, a single function which parses a string of Mark
 ```js
 import { starkdown } from 'starkdown'
 import { defaultParsers } from 'starkdown/es/defaultParsers'
-import { escape, boldItalicsStrikethrough, codeblocks, inlineCode, quote } from 'starkdown/es/parsers'
+import {
+  escape,
+  boldItalicsStrikethrough,
+  codeblocks,
+  inlineCode,
+  quote,
+} from 'starkdown/es/parsers'
 
 const str = '_This_ is **easy** to `use`.'
 
@@ -37,7 +43,7 @@ const str = '_This_ is **easy** to `use`.'
 const old = starkdown(str)
 
 // this will parse the string without the table tokeniser
-const withOptions = starkdown(str, { plugins: [defaultParsers.filter(x=>x.name !== 'table')] })
+const withOptions = starkdown(str, { plugins: [defaultParsers.filter((x) => x.name !== 'table')] })
 
 // you can also just do a la carte
 const discordEsqueMD = [escape, boldItalicsStrikethrough, codeblock, inlineCode, quote]
@@ -55,7 +61,7 @@ The html returned will look like:
 With most Markdown implementations, paragraphs are wrapped in `<p>` tags. With Starkdown, this is no different.
 
 - All paragraphs and "inline" elements are wrapped in a `<p>` tags
-(See [List of "inline" elements](https://developer.mozilla.org/en-US/docs/Web/HTML/Inline_elements#list_of_inline_elements) on MDN)
+  (See [List of "inline" elements](https://developer.mozilla.org/en-US/docs/Web/HTML/Inline_elements#list_of_inline_elements) on MDN)
   - Eg. a standalone image will still be wrapped in a `<p>` tag, because it's an inline element.
 - All non-inline elements will not be wrapped in `<p>` tags
   - Eg. a table will not be wrapped in a `<p>` tag.
@@ -69,7 +75,8 @@ Img: ![](/some-image.png)
 converts to
 
 ```html
-<p>Check <a href="https://github.com">github</a></p><p>Img: <img src="/some-image.png" alt="" /></p>
+<p>Check <a href="https://github.com">github</a></p>
+<p>Img: <img src="/some-image.png" alt="" /></p>
 ```
 
 But also, when _just_ using images and links:
@@ -83,7 +90,8 @@ But also, when _just_ using images and links:
 converts to
 
 ```html
-<p><a href="https://github.com">github</a></p><p><img src="/some-image.png" alt="" /></p>
+<p><a href="https://github.com">github</a></p>
+<p><img src="/some-image.png" alt="" /></p>
 ```
 
 In contrast, non-inline elements won't get a `<p>` tag:
@@ -99,10 +107,12 @@ const a = 1
 converts to
 
 ```html
-<h3>Usage</h3><pre class="code js"><code class="language-js">const a = 1</code></pre>
+<h3>Usage</h3>
+<pre class="code js"><code class="language-js">const a = 1</code></pre>
 ```
 
 ### Links
+
 Usual markdown for links works, i.e
 
 ```md
@@ -118,7 +128,7 @@ becomes
 But you can also add properties and classes to links using attribute lists like so:
 
 ```md
-[github](https://github.com){:target="_blank" .foo .bar #baz}
+[github](https://github.com){:target="\_blank" .foo .bar #baz}
 ```
 
 becomes
@@ -136,7 +146,12 @@ becomes
 converts to
 
 ```html
-<table><tr><td>My</td><td>Table</td></tr></table>
+<table>
+  <tr>
+    <td>My</td>
+    <td>Table</td>
+  </tr>
+</table>
 ```
 
 ### Fenced Divs
@@ -172,7 +187,7 @@ converts to
 You need to escape your formatting with `\` in order to correctly convert sentences like these:
 
 ```md
-snake_case is _so-so_
+snake*case is \_so-so*
 ```
 
 will convert to:
@@ -184,7 +199,7 @@ will convert to:
 Instead you should write
 
 ```md
-snake\_case is _so-so_
+snake*case is \_so-so*
 ```
 
 which will convert to:
@@ -196,13 +211,14 @@ which will convert to:
 ## Custom Parsers
 
 Parsers are defined as objects that match the following typescript definition
+
 ```ts
 export type ParserDef = {
   // must be a unique name
-  name: string,
+  name: string
   // regex must contain at least 1 named capture group,. these are parsed to as the vars in the ParserFunction
-  regex: RegExp,
-  handler: ParserFunction,
+  regex: RegExp
+  handler: ParserFunction
 }
 
 export type ParserFunction = (
@@ -218,10 +234,10 @@ export type ParserFunction = (
     // index of the last char of match, (equal to index + length)
     lastIndex: number
     // for recursive parsing of tokens
-    parseParagraph: (str:string) => string
-    parseNext: (str:string, start:number) => ParseData
-    parseIter: (str:string) => IterableIterator<ParseData>,
-    parse: (str:string) => string,
+    parseParagraph: (str: string) => string
+    parseNext: (str: string, start: number) => ParseData
+    parseIter: (str: string) => IterableIterator<ParseData>
+    parse: (str: string) => string
   }
   // if a string is returned, it is transformed into parseData using the index and lastIndex in state
 ) => string | ParseData
@@ -237,7 +253,6 @@ export type ParseData = [
   data?: Record<string | symbol, unknown>
 ]
 ```
-
 
 Examples can be found in the [parsers folder](./src/parsers/).
 

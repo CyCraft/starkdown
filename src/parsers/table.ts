@@ -23,11 +23,10 @@ export const table: ParserDef = {
         row.map((x) => wrap(i === 0 && hasHeading ? 'th' : 'td', parseParagraph(x)))
       )
     )
-    return createParseData(
-      wrap('table', html),
-      index,
-      lastIndex + (tableParse.at(-1)?.[2] ?? 0),
-      { cells, hasHeading, [TABLE]: true },
-    )
+    return createParseData(wrap('table', html), index, lastIndex + (tableParse.at(-1)?.[2] ?? 0), {
+      cells,
+      hasHeading,
+      [TABLE]: true,
+    })
   },
 }
