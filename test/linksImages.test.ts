@@ -21,6 +21,12 @@ describe('links & images', () => {
     expect(starkdown('[Example](#example)')).toEqual('<p><a href="#example">Example</a></p>')
   })
 
+  test('parses anchor links inline', () => {
+    expect(starkdown('Hello [Example](#example)!')).toEqual(
+      '<p>Hello <a href="#example">Example</a>!</p>'
+    )
+  })
+
   test('parses anchors with dashes inside', () => {
     expect(starkdown('[test.com/---/hello](test.com/---/hello)')).toEqual(
       '<p><a href="test.com/---/hello">test.com/---/hello</a></p>'
