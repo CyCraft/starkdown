@@ -196,7 +196,7 @@ which will convert to:
 
 Starkdown comes built in with several "parsers" that each are responsible to convert a part of the markdown to HTML. You can filter out certain parsers to get different results.
 
-The list of enabled default parses can be inspected at [./src/defaultParsers.ts](./src/defaultParsers.ts).
+The list of enabled default parsers can be inspected at [./src/defaultParsers.ts](./src/defaultParsers.ts).
 
 ```js
 import { starkdown } from 'starkdown'
@@ -216,9 +216,9 @@ You can also add your own parsers this way. See [Custom Parsers](#custom-parsers
 
 ## Tree-Shaking
 
-You can slim down the import & bundle size of Starkdown if you don't need all of the parses provided in Starkdown by default.
+You can slim down the import & bundle size of Starkdown if you don't need all of the parsers provided in Starkdown by default.
 
-The list of default parses can be inspected at [./src/defaultParsers.ts](./src/defaultParsers.ts).
+The list of default parsers can be inspected at [./src/defaultParsers.ts](./src/defaultParsers.ts).
 
 ```js
 import { createTokenizerParser } from 'starkdown'
