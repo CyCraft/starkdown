@@ -27,7 +27,7 @@
     "test": "vitest run",
     "test:ui": "vitest --ui",
     "test:watch": "vitest",
-    "prettier:fix-all": "prettier --write \"{src,test}/**/*.ts\"",
+    "prettier:fix-all": "prettier --write \"{src,test}/**/*.ts\" \"*.{md,json}\"",
     "release": "npm run lint && del dist && npm run build && np"
   },
   "devDependencies": {
