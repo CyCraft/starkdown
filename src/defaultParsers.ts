@@ -2,7 +2,6 @@ import { anchor } from './parsers/anchor'
 import { bis } from './parsers/boldItalicsStrikethrough'
 import { codeblock } from './parsers/codeblock'
 import { escape } from './parsers/escape'
-import { fencedDiv } from './parsers/fencedDiv'
 import { hashHeading } from './parsers/hashHeading'
 import { hr } from './parsers/hr'
 import { html } from './parsers/html'
@@ -21,16 +20,21 @@ export const defaultParsers = [
   hr, // must always come second
   // the remaining order doesn't matter
   anchor,
+  anchor,
   bis,
   codeblock,
-  fencedDiv,
   hashHeading,
   html,
+  html,
+  image,
   image,
   inlineCode,
   newLine,
   ol,
+  ol,
   poetry,
+  poetry,
+  quote,
   quote,
   table,
   ul,

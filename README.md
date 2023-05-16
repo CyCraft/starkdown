@@ -45,7 +45,8 @@ const old = starkdown(str)
 // this will parse the string without the table tokeniser
 const withOptions = starkdown(str, { plugins: [defaultParsers.filter((x) => x.name !== 'table')] })
 
-// you can also just do a la carte
+// you can also just do a la carte selection of plugins
+// Note: These are in order of priority so the order can matter, e.g escape must come first to escape markdown
 const discordEsqueMD = [escape, boldItalicsStrikethrough, codeblock, inlineCode, quote]
 const discordLike = starkdown(str, { plugins: discordEsqueMD })
 ```
