@@ -192,7 +192,7 @@ which will convert to:
 <p>snake_case is <em>so-so</em></p>
 ```
 
-## Prevent certain MarkDown features
+## Disable MarkDown Features
 
 Starkdown comes built in with several "parsers" that each are responsible to convert a part of the markdown to HTML. You can filter out certain parsers to get different results.
 
