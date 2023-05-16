@@ -212,7 +212,7 @@ const mdDefault = starkdown(str)
 const mdNoTables = starkdown(str, { plugins: [defaultParsers.filter((x) => x.name !== 'table')] })
 ```
 
-You can also add your own parsers this way. See [Custom Parsers](#custom-parsers) below.
+You can also add your own parsers this way. See [#Custom Parsers](#custom-parsers) below.
 
 ## Tree-Shaking
 
@@ -239,7 +239,7 @@ const mdDiscord = starkdown(str, { plugins: mdDiscordPlugins })
 // Note: These are in order of priority so the order can matter, e.g `escape` must come first to escape markdown
 ```
 
-You can also add your own parsers this way. See [Custom Parsers](#custom-parsers) below.
+You can also add your own parsers this way. See [#Custom Parsers](#custom-parsers) below.
 
 ## Custom Parsers
 
