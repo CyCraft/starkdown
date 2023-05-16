@@ -204,11 +204,11 @@ import { starkdown, defaultParsers } from 'starkdown'
 const str = '_This_ is **easy** to `use`.'
 
 // implicitly uses defaultParsers
-const mdDefault = starkdown(str)
+const html = starkdown(str)
 
 // this is a quick way to parse the string without the table tokeniser
 // however, even though the parser is not used, it will not get tree-shaked
-const mdNoTables = starkdown(str, { plugins: [defaultParsers.filter((x) => x.name !== 'table')] })
+const htmlWithoutTables = starkdown(str, { plugins: defaultParsers.filter((x) => x.name !== 'table') })
 ```
 
 You can also add your own parsers this way. See [#Custom Parsers](#custom-parsers) below.
@@ -227,7 +227,8 @@ const str = '_This_ is **easy** to `use`.'
 
 // This will tree-shake out any parser that is not used
 const mdDiscordPlugins = [escape, boldItalicsStrikethrough, codeblock, inlineCode, quote]
-const mdDiscord = starkdown(str, { plugins: mdDiscordPlugins })
+const mdDiscord = createTokenizerParser(mdDiscordPlugins)
+const html = mdDiscord(str, { plugins: mdDiscordPlugins })
 
 // Note: These are in order of priority so the order can matter, e.g `escape` must come first to escape markdown
 ```
@@ -236,51 +237,15 @@ You can also add your own parsers this way. See [#Custom Parsers](#custom-parser
 
 ## Custom Parsers
 
-Parsers are defined as objects that match the following typescript definition
+Parsers are defined as objects that match the following TypeScript definition.
 
 ```ts
-export type ParserDef = {
-  // must be a unique name
-  name: string
-  // regex must contain at least 1 named capture group,. these are parsed to as the vars in the ParserFunction
-  regex: RegExp
-  handler: ParserFunction
-}
-
-export type ParserFunction = (
-  // Capture groups are here
-  vars: Record<string, string>,
-  state: {
-    // index of the token
-    index: number
-    // source string
-    src: string
-    // length of match
-    length: number
-    // index of the last char of match, (equal to index + length)
-    lastIndex: number
-    // for recursive parsing of tokens
-    parseParagraph: (str: string) => string
-    parseNext: (str: string, start: number) => ParseData
-    parseIter: (str: string) => IterableIterator<ParseData>
-    parse: (str: string) => string
-  }
-  // if a string is returned, it is transformed into parseData using the index and lastIndex in state
-) => string | ParseData
-
-export type ParseData = [
-  result: string | string[],
-  // Start index of match
-  startIndex: number,
-  // end index of match, this is useful if your end up parsing more than
-  // the tokeniser originally provided
-  stopIndex: number,
-  // any data you wish to forward can be included here for later parsers to use
-  data?: Record<string | symbol, unknown>
-]
+import type { ParserDef } from 'starkdown'
+// use this to create your custom parser
 ```
 
-Examples can be found in the [parsers folder](./src/parsers/).
+- Check the source code of [`ParserDef`](./src/types.ts) for more info.
+- Examples can be found in the [parsers folder](./src/parsers/).
 
 ## Security
 
