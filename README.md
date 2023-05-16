@@ -28,30 +28,13 @@ Starkdown is really easy to use, a single function which parses a string of Mark
 
 ```js
 import { starkdown } from 'starkdown'
-import { defaultParsers } from 'starkdown/es/defaultParsers'
-import {
-  escape,
-  boldItalicsStrikethrough,
-  codeblocks,
-  inlineCode,
-  quote,
-} from 'starkdown/es/parsers'
 
 const str = '_This_ is **easy** to `use`.'
 
-// implicitly uses defaultParsers
-const old = starkdown(str)
-
-// this will parse the string without the table tokeniser
-const withOptions = starkdown(str, { plugins: [defaultParsers.filter((x) => x.name !== 'table')] })
-
-// you can also just do a la carte selection of plugins
-// Note: These are in order of priority so the order can matter, e.g escape must come first to escape markdown
-const discordEsqueMD = [escape, boldItalicsStrikethrough, codeblock, inlineCode, quote]
-const discordLike = starkdown(str, { plugins: discordEsqueMD })
+const html = starkdown(str)
 ```
 
-The html returned will look like:
+The `html` returned will look like:
 
 ```html
 <p><em>This</em> is <strong>easy</strong> to <code>use</code>.</p>
@@ -98,7 +81,7 @@ converts to
 In contrast, non-inline elements won't get a `<p>` tag:
 
 ```md
-### Usage
+### Code
 
 \`\`\`js
 const a = 1
@@ -108,7 +91,7 @@ const a = 1
 converts to
 
 ```html
-<h3>Usage</h3>
+<h3>Code</h3>
 <pre class="code js"><code class="language-js">const a = 1</code></pre>
 ```
 
@@ -208,6 +191,55 @@ which will convert to:
 ```html
 <p>snake_case is <em>so-so</em></p>
 ```
+
+## Prevent certain MarkDown features
+
+Starkdown comes built in with several "parsers" that each are responsible to convert a part of the markdown to HTML. You can filter out certain parsers to get different results.
+
+The list of enabled default parses can be inspected at [./src/defaultParsers.ts](./src/defaultParsers.ts).
+
+```js
+import { starkdown } from 'starkdown'
+import { defaultParsers } from 'starkdown/es/defaultParsers'
+
+const str = '_This_ is **easy** to `use`.'
+
+// implicitly uses defaultParsers
+const mdDefault = starkdown(str)
+
+// this is a quick way to parse the string without the table tokeniser
+// however, even though the parser is not used, it will not get tree-shaked
+const mdNoTables = starkdown(str, { plugins: [defaultParsers.filter((x) => x.name !== 'table')] })
+```
+
+You can also add your own parsers this way. See [Custom Parsers](#custom-parsers) below.
+
+## Tree-Shaking
+
+You can slim down the import & bundle size of Starkdown if you don't need all of the parses provided in Starkdown by default.
+
+The list of default parses can be inspected at [./src/defaultParsers.ts](./src/defaultParsers.ts).
+
+```js
+import { createTokenizerParser } from 'starkdown'
+import {
+  escape,
+  boldItalicsStrikethrough,
+  codeblocks,
+  inlineCode,
+  quote,
+} from 'starkdown/es/parsers'
+
+const str = '_This_ is **easy** to `use`.'
+
+// This will tree-shake out any parser that is not used
+const mdDiscordPlugins = [escape, boldItalicsStrikethrough, codeblock, inlineCode, quote]
+const mdDiscord = starkdown(str, { plugins: mdDiscordPlugins })
+
+// Note: These are in order of priority so the order can matter, e.g `escape` must come first to escape markdown
+```
+
+You can also add your own parsers this way. See [Custom Parsers](#custom-parsers) below.
 
 ## Custom Parsers
 
