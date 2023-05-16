@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "module": "esnext",
-    "target": "es2019",
+    "target": "ESNext",
     "lib": ["esnext", "DOM"],
     "strict": true,
     "moduleResolution": "node",
@@ -12,5 +12,6 @@
     "declaration": true,
     "declarationDir": "./dist/types/"
   },
-  "include": ["src/**/*", "test/**/*"]
+  "include": ["src/**/*", "test/**/*"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }
