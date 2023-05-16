@@ -14,15 +14,15 @@ export type ParserFunction = (
     src: string
     length: number
     lastIndex: number
-    parseParagraph: (str:string) => string
-    parseNext: (str:string, start:number) => ParseData
-    parseIter: (str:string) => IterableIterator<ParseData>,
-    parse: (str:string) => string,
+    parseParagraph: (str: string) => string
+    parseNext: (str: string, start: number) => ParseData
+    parseIter: (str: string) => IterableIterator<ParseData>
+    parse: (str: string) => string
   }
 ) => string | ParseData
 
 export type ParserDef = {
-  name: string,
-  regex: RegExp,
-  handler: ParserFunction,
+  name: string
+  regex: RegExp
+  handler: ParserFunction
 }

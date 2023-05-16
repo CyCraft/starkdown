@@ -1,5 +1,5 @@
 import type { ParserDef } from '../types'
-import { wrap, encodeAttr } from '../utils'
+import { encodeAttr, wrap } from '../utils'
 
 export const inlineCode: ParserDef = {
   name: 'inlineCode',

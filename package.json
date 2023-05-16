@@ -27,6 +27,7 @@
     "test": "vitest run",
     "test:ui": "vitest --ui",
     "test:watch": "vitest",
+    "prettier:fix-all": "prettier --write \"{src,test}/**/*.ts\"",
     "release": "npm run lint && del dist && npm run build && np"
   },
   "devDependencies": {
@@ -41,6 +42,7 @@
     "nodemon": "^2.0.21",
     "np": "^7.6.4",
     "prettier": "^2.8.6",
+    "prettier-plugin-organize-imports": "^3.2.2",
     "rollup": "^3.20.0",
     "rollup-plugin-typescript2": "^0.34.1",
     "ts-node": "^10.9.1",

@@ -54,7 +54,9 @@ export const createTokenizerParser = (parsers: ParserDef[]) => {
       ...tokenizerResult,
     })
 
-    return Array.isArray(value) ? value : createParseData(value, startIndex + index, lastIndex, groups)
+    return Array.isArray(value)
+      ? value
+      : createParseData(value, startIndex + index, lastIndex, groups)
   }
 
   /** Parse a single Markdown paragraph into an HTML String. */

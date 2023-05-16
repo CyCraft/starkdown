@@ -5,7 +5,7 @@ export const createParseData = <T>(
   index: number,
   lastIndex: number,
   data?: T
-): ParseData => (data ? [value, index, lastIndex,data] : [value, index, lastIndex]) as ParseData
+): ParseData => (data ? [value, index, lastIndex, data] : [value, index, lastIndex]) as ParseData
 
 /** Outdent a string based on the first indented line's leading whitespace
  *	@private

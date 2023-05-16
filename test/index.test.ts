@@ -1,4 +1,4 @@
-import { expect, describe, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { starkdown } from '../src'
 
 describe('ignore special formating as part of words', () => {

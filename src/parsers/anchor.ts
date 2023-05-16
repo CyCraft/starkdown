@@ -1,9 +1,9 @@
 import { ParserDef } from '../types'
-import { until, attrs, parseAttrList, createParseData } from '../utils'
+import { attrs, createParseData, parseAttrList, until } from '../utils'
 const LINK_END = Symbol('isLinkEnd')
 
-export const link: ParserDef = {
-  name: 'link',
+export const anchor: ParserDef = {
+  name: 'anchor',
   regex:
     /(?<start>\[)|(?<end>\])(?:\((?<href>[^")]+?)(?: "(?<title>[^"]+)")?\))?(?:\{:(?<ial>.+?)\})?/,
   handler: ({ start, href, title, ial }, { index, src, lastIndex, parseNext, parseIter }) => {

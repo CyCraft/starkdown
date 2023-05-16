@@ -1,4 +1,4 @@
-import { expect, describe, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { starkdown } from '../src'
 
 describe('links & images', () => {
@@ -9,11 +9,11 @@ describe('links & images', () => {
   })
 
   test('parses links with bold text', () => {
-    expect(starkdown('[**starkdown**](http://github.com/developit/starkdown)')).toEqual(
-      '<p><a href="http://github.com/developit/starkdown"><strong>starkdown</strong></a></p>'
+    expect(starkdown('[**starkdown**](http://github.com/developit/**starkdown**)')).toEqual(
+      '<p><a href="http://github.com/developit/**starkdown**"><strong>starkdown</strong></a></p>'
     )
-    expect(starkdown('[ **starkdown** ](http://github.com/developit/starkdown)')).toEqual(
-      '<p><a href="http://github.com/developit/starkdown"> <strong>starkdown</strong> </a></p>'
+    expect(starkdown('[ **starkdown** ](http://github.com/developit/**starkdown**)')).toEqual(
+      '<p><a href="http://github.com/developit/**starkdown**"> <strong>starkdown</strong> </a></p>'
     )
   })
 
