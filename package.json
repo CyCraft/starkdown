@@ -19,6 +19,9 @@
       "require": "./dist/parsers.cjs"
     }
   },
+  "engines": {
+    "node": ">=16"
+  },
   "files": [
     "dist"
   ],
