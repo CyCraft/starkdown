@@ -3,7 +3,7 @@
   "sideEffects": false,
   "type": "module",
   "version": "3.0.3",
-  "description": "Tiny <2kb Markdown parser written, almost as fast and smart as Tony Stark",
+  "description": "Tiny <3kb Markdown parser written, almost as fast and smart as Tony Stark",
   "types": "./dist/types/src/index.d.ts",
   "main": "./dist/starkdown.cjs",
   "module": "./dist/starkdown.es.js",
