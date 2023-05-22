@@ -8,9 +8,7 @@
     "moduleResolution": "node",
     "isolatedModules": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "declaration": true,
-    "declarationDir": "./dist/types/"
+    "skipLibCheck": true
   },
   "include": ["src/**/*", "test/**/*"],
   "references": [{ "path": "./tsconfig.node.json" }]
