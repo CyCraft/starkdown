@@ -5,18 +5,28 @@
   "version": "3.2.0",
   "description": "Tiny <3kb Markdown parser written, almost as fast and smart as Tony Stark",
   "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
   "module": "./dist/index.js",
-  "main": "./dist/index.cjs",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.cts",
+        "default": "./dist/cjs/index.cjs"
+      }
     },
     "./parsers": {
-      "types": "./dist/parsers/index.d.ts",
-      "import": "./dist/parsers.js",
-      "require": "./dist/parsers.cjs"
+      "import": {
+        "types": "./dist/parsers.d.ts",
+        "default": "./dist/parsers.js"
+      },
+      "require": {
+        "types": "./dist/cjs/parsers.d.cts",
+        "default": "./dist/cjs/parsers.cjs"
+      }
     }
   },
   "engines": {
@@ -26,8 +36,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "vite build",
-    "dev": "vite watch",
+    "build": "rollup -c ./rollup.config.js",
     "lint": "tsc --noEmit && eslint ./src --ext .ts",
     "test": "vitest run",
     "test:ui": "vitest --ui",
@@ -45,9 +54,10 @@
     "np": "^7.7.0",
     "prettier": "^2.8.8",
     "prettier-plugin-organize-imports": "^3.2.2",
+    "rollup": "^3.23.0",
+    "rollup-plugin-dts": "^5.3.0",
+    "rollup-plugin-esbuild": "^5.0.0",
     "typescript": "^5.0.4",
-    "vite": "^4.3.6",
-    "vite-plugin-dts": "^2.3.0",
     "vitest": "^0.31.0"
   },
   "authors": [
