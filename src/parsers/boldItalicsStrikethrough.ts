@@ -3,9 +3,9 @@ import { wrap } from '../utils'
 
 export const bis: ParserDef = {
   name: 'bis',
-  regex: /(?<t>\*\*?|__?|~~)(?<content>.+?)(?<!\\)\k<t>/,
-  handler: ({ t, content }, { parseParagraph }) => {
+  regex: /(?<t>\*\*?|__?|~~)(?<content>.*?)(?<ns>[^\\\n])\k<t>/,
+  handler: ({ t, content, ns }, { parseParagraph }) => {
     const el = t === '~~' ? 's' : t.length === 1 ? 'em' : 'strong'
-    return wrap(el, parseParagraph(content))
+    return wrap(el, parseParagraph((content ?? '') + ns))
   },
 }
