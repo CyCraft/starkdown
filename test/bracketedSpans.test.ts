@@ -10,6 +10,9 @@ describe('bracketedSpans', () => {
   test('class', () => {
     expect(starkdown(`I'm [red]{.c-red}`)).toEqual(`<p>I'm <span class="c-red">red</span></p>`)
   })
+  test('class with _', () => {
+    expect(starkdown(`I'm [red]{._c_red}`)).toEqual(`<p>I'm <span class="_c_red">red</span></p>`)
+  })
   test('classes without spaces', () => {
     expect(starkdown(`I'm [red]{.c-red.text-bold.t-h1}`)).toEqual(
       `<p>I'm <span class="c-red text-bold t-h1">red</span></p>`
