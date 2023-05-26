@@ -30,6 +30,28 @@ describe('code & quotes', () => {
     )
   })
 
+  test('parses tabs as a code poetry block & retains inner tabs', () => {
+    expect(starkdown('\t\tvar a = 1')).toEqual(
+      '<pre class="code poetry"><code>\tvar a = 1</code></pre>'
+    )
+  })
+
+  test('does not parses two spaces as a code poetry block', () => {
+    expect(starkdown('  var a = 1')).toEqual('<p>var a = 1</p>')
+  })
+
+  test('parses four spaces as a code poetry block', () => {
+    expect(starkdown('    var a = 1')).toEqual(
+      '<pre class="code poetry"><code>var a = 1</code></pre>'
+    )
+  })
+
+  test('parses four spaces as a code poetry block & retains inner spaces', () => {
+    expect(starkdown('      var a = 1')).toEqual(
+      '<pre class="code poetry"><code>  var a = 1</code></pre>'
+    )
+  })
+
   test('escapes code/quote blocks', () => {
     expect(starkdown('```\n<foo>\n```')).toEqual(
       '<pre class="code "><code>&lt;foo&gt;</code></pre>'
