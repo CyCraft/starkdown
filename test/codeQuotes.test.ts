@@ -52,6 +52,18 @@ describe('code & quotes', () => {
     )
   })
 
+  test('parses multi-line tabs as one code poetry block', () => {
+    expect(starkdown(`\tfunction (){\n\t\treturn 1\n\t}`)).toEqual(
+      '<pre class="code poetry"><code>function (){\n\treturn 1\n}</code></pre>'
+    )
+  })
+
+  test('parses multi-line four spaces as one code poetry block', () => {
+    expect(starkdown('    function (){\n      return 1\n    }')).toEqual(
+      '<pre class="code poetry"><code>function (){\n  return 1\n}</code></pre>'
+    )
+  })
+
   test('escapes code/quote blocks', () => {
     expect(starkdown('```\n<foo>\n```')).toEqual(
       '<pre class="code "><code>&lt;foo&gt;</code></pre>'
