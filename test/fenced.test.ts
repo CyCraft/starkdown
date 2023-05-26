@@ -33,4 +33,19 @@ describe('fenced divs (notes)', () => {
       '<div class="fenced"><p><strong>info</strong></p><p><a href="https://github.com">docs</a></p></div>'
     )
   })
+  test('fenced div with quadruple new lines', () => {
+    expect(starkdown(':::\na\n\nb\n\nc\n\nd\n:::')).toEqual(
+      '<div class="fenced"><p>a</p><p>b</p><p>c</p><p>d</p></div>'
+    )
+  })
+  test('fenced div with quadruple new lines and double inner padding', () => {
+    expect(starkdown(':::\n\na\n\nb\n\nc\n\nd\n\n:::')).toEqual(
+      '<div class="fenced"><p>a</p><p>b</p><p>c</p><p>d</p></div>'
+    )
+  })
+  test('fenced div with quadruple new lines & custom class', () => {
+    expect(starkdown(':::info\na\n\nb\n\nc\n\nd\n:::')).toEqual(
+      '<div class="fenced info"><p>a</p><p>b</p><p>c</p><p>d</p></div>'
+    )
+  })
 })

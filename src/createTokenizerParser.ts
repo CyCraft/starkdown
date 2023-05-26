@@ -99,7 +99,7 @@ export function createTokenizerParser(parsers: ParserDef[]) {
         if (p === fencedBlock) fencedBlock = false
         return result
       }
-      if (/```[A-z]*/.test(p) || /::: ?[A-z]*/.test(p)) fencedBlock = p.slice(0, 3)
+      if (/```[^\n]*/.test(p) || /::: ?[^\n]*/.test(p)) fencedBlock = p.slice(0, 3)
       if (p) result.push(p.replace(/(?:^\n+|\n+$)/g, ''))
       return result
     }, [])
