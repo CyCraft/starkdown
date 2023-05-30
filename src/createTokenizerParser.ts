@@ -14,15 +14,6 @@ export function createTokenizerParser(parsers: ParserDef[]) {
   const tokens: Map<string, ParserDef> = new Map(parsers.map((x) => [x.name, x]))
   const tokenizer = compileTokens(tokens)
 
-  const tokenizerResult = {
-    parse,
-    parseIter,
-    parseNext,
-    parseParagraph,
-  }
-
-  return tokenizerResult
-
   function* parseIter(str: string): IterableIterator<ParseData> {
     let i = 0
     while (i < str.length) {
@@ -112,4 +103,13 @@ export function createTokenizerParser(parsers: ParserDef[]) {
     }
     return result.trim()
   }
+
+  const tokenizerResult = {
+    parse,
+    parseIter,
+    parseNext,
+    parseParagraph,
+  }
+
+  return tokenizerResult
 }
