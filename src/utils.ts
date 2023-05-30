@@ -10,8 +10,15 @@ export const createParseData = <T>(
 /** Outdent a string based on the first indented line's leading whitespace
  *	@private
  */
-export function outdent(str: string): string {
-  return str.replace(RegExp('^' + (str.match(/^([\t ])+/) || '')[0], 'gm'), '')
+export function outdent(str: string, indentValue?: number | string): string {
+  let indentStr = ''
+  if (typeof indentValue === 'number') indentStr = ' '.repeat(indentValue)
+  if (typeof indentValue === 'string') indentStr = indentValue
+  else indentStr = str.match(/^([\t ])+/)?.[0] ?? ''
+
+  const matcher = new RegExp(`^${indentStr}`, 'gm')
+
+  return str.replace(matcher, '')
 }
 /** Encode special attribute characters to HTML entities in a String.
  *	@private

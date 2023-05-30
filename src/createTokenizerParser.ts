@@ -14,15 +14,6 @@ export function createTokenizerParser(parsers: ParserDef[]) {
   const tokens: Map<string, ParserDef> = new Map(parsers.map((x) => [x.name, x]))
   const tokenizer = compileTokens(tokens)
 
-  const tokenizerResult = {
-    parse,
-    parseIter,
-    parseNext,
-    parseParagraph,
-  }
-
-  return tokenizerResult
-
   function* parseIter(str: string): IterableIterator<ParseData> {
     let i = 0
     while (i < str.length) {
@@ -99,7 +90,7 @@ export function createTokenizerParser(parsers: ParserDef[]) {
         if (p === fencedBlock) fencedBlock = false
         return result
       }
-      if (/```[^\n]*/.test(p) || /::: ?[^\n]*/.test(p)) fencedBlock = p.slice(0, 3)
+      if (/```[^\n]*/.test(p) || /::: ?[^\n]*/.test(p)) fencedBlock = p.trim().slice(0, 3)
       if (p) result.push(p.replace(/(?:^\n+|\n+$)/g, ''))
       return result
     }, [])
@@ -110,6 +101,15 @@ export function createTokenizerParser(parsers: ParserDef[]) {
       const p = parseParagraph(part)
       result = (p && (!p.startsWith('<') || isInline(p)) ? `<p>${p.trim()}</p>` : p) + result
     }
-    return result
+    return result.trim()
   }
+
+  const tokenizerResult = {
+    parse,
+    parseIter,
+    parseNext,
+    parseParagraph,
+  }
+
+  return tokenizerResult
 }

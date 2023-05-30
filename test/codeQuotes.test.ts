@@ -59,8 +59,8 @@ describe('code & quotes', () => {
   })
 
   test('parses multi-line four spaces as one code poetry block', () => {
-    expect(starkdown('    function (){\n      return 1\n    }')).toEqual(
-      '<pre class="code poetry"><code>function (){\n  return 1\n}</code></pre>'
+    expect(starkdown('    function (){\n      return 4\n    }')).toEqual(
+      '<pre class="code poetry"><code>function (){\n  return 4\n}</code></pre>'
     )
   })
 
