@@ -1,8 +1,9 @@
 import type { ParserDef } from '../types'
-import { encodeAttr, wrap } from '../utils'
+import { encodeAttr, outdent, wrap } from '../utils'
 
 export const poetry: ParserDef = {
   name: 'poetry',
-  regex: /(?:^|\n+)(?:\t| {4})(?<content>.+)+\n*/,
-  handler: ({ content }) => `<pre class="code poetry">${wrap('code', encodeAttr(content))}</pre>`,
+  regex: /(?:^|\n+)(?<tab>\t| {4})(?<content>[\s\S]+)(?:$|\n{2,})*/,
+  handler: ({ content, tab }) =>
+    `<pre class="code poetry">${outdent(wrap('code', encodeAttr(content)), tab)}</pre>`,
 }
