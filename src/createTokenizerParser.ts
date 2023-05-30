@@ -99,7 +99,7 @@ export function createTokenizerParser(parsers: ParserDef[]) {
         if (p === fencedBlock) fencedBlock = false
         return result
       }
-      if (/```[^\n]*/.test(p) || /::: ?[^\n]*/.test(p)) fencedBlock = p.slice(0, 3)
+      if (/```[^\n]*/.test(p) || /::: ?[^\n]*/.test(p)) fencedBlock = p.trim().slice(0, 3)
       if (p) result.push(p.replace(/(?:^\n+|\n+$)/g, ''))
       return result
     }, [])
@@ -110,6 +110,6 @@ export function createTokenizerParser(parsers: ParserDef[]) {
       const p = parseParagraph(part)
       result = (p && (!p.startsWith('<') || isInline(p)) ? `<p>${p.trim()}</p>` : p) + result
     }
-    return result
+    return result.trim()
   }
 }
