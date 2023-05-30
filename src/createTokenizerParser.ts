@@ -72,7 +72,8 @@ export function createTokenizerParser(parsers: ParserDef[]) {
     /** Built out the result in a single string */
     let result = ''
 
-    const badParagraphSpacingAroundFences = /(?:\r?\n)+(```|:::|-{3,}|\* \* \*(?: \*)*)(?:\r?\n)+/gm
+    const badParagraphSpacingAroundFences =
+      /(?:\r?\n)+(```[^\n]*|::: ?[^\n]*|-{3,}|\* \* \*(?: \*)*)(?:\r?\n)+/gm
     const badParagraphSpacingRegexBeforeBlocks = /(\r?\n[^\r\n >].*)(?:\r?\n)(>)/gm
     const badParagraphSpacingRegexAfterBlocks = /(\r?\n[>] .*)(?:\r?\n)([^\r\n >])/gm
     const goodParagraphSpacing = `\n${md}\n`

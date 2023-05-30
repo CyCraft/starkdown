@@ -58,4 +58,9 @@ describe('fenced divs (notes)', () => {
       '<h1>hi</h1><p>p</p><div class="fenced"><p><strong>info</strong></p></div><div class="fenced info"><p>a</p><p>b</p><p>c</p><p>d</p></div>'
     )
   })
+  test('multi-lined fenced div after header', () => {
+    expect(starkdown('# hi\n::: info\n**yes?**\n\n**no?**\n:::')).toEqual(
+      '<h1>hi</h1><div class="fenced info"><p><strong>yes?</strong></p><p><strong>no?</strong></p></div>'
+    )
+  })
 })
