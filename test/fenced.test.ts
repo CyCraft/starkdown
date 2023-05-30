@@ -48,4 +48,14 @@ describe('fenced divs (notes)', () => {
       '<div class="fenced info"><p>a</p><p>b</p><p>c</p><p>d</p></div>'
     )
   })
+  test('multiple fenced divs', () => {
+    expect(starkdown(':::\n**info**\n:::\n:::info\na\n\nb\n\nc\n\nd\n:::')).toEqual(
+      '<div class="fenced"><p><strong>info</strong></p></div><div class="fenced info"><p>a</p><p>b</p><p>c</p><p>d</p></div>'
+    )
+  })
+  test('multiple fenced divs complex case', () => {
+    expect(starkdown('# hi\n\np\n:::\n**info**\n\n:::\n\n::: info\na\n\nb\n\nc\n\nd\n:::')).toEqual(
+      '<h1>hi</h1><p>p</p><div class="fenced"><p><strong>info</strong></p></div><div class="fenced info"><p>a</p><p>b</p><p>c</p><p>d</p></div>'
+    )
+  })
 })
