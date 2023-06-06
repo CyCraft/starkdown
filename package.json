@@ -93,6 +93,11 @@
     "publish": false,
     "yarn": false
   },
+  "typedocOptions": {
+    "entryPoints": ["src/index.ts"],
+    "out": "docs/dist",
+    "skipErrorChecking": true
+  },
   "prettier": {
     "printWidth": 100,
     "tabWidth": 2,
