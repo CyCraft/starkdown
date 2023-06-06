@@ -27,8 +27,14 @@ export function encodeAttr(str: string): string {
   return (str + '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
 
-export const wrap = (el: string, inner: string | string[]) =>
-  `<${el}>${Array.isArray(inner) ? inner.join('') : inner}</${el}>`
+export const wrap = (
+  el: string,
+  inner: string | string[],
+  attributes?: Record<string, unknown>
+) => {
+  const attrString = attributes ? attrs(attributes) : ''
+  return `<${el}${attrString}>${Array.isArray(inner) ? inner.join('') : inner}</${el}>`
+}
 
 export const parseAttrList = (str = '') => {
   const rules: string[] = []
@@ -72,7 +78,7 @@ export function* until<T>(
   }
 }
 
-export function attrs(attrs: Record<string, string>) {
+export function attrs(attrs: Record<string, unknown>) {
   const result = Object.entries(attrs)
     .filter(([k, v]) => v != null && typeof k != 'symbol')
     .map(([k, v]) => (typeof v === 'boolean' ? k : `${k}="${v}"`))
@@ -92,5 +98,5 @@ export const compileTokens = (tokens: Map<string, Omit<ParserDef, 'name'>>) => {
     )
   }
 
-  return new RegExp(regexParts.join('|'), 'gumid')
+  return new RegExp(regexParts.join('|'), 'guid')
 }
