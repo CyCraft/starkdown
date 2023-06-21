@@ -41,24 +41,30 @@ describe('lists', () => {
   })
 
   test('does not parse incorrect unordered lists', () => {
-    expect(starkdown('　- One\n　- Two')).toEqual('<p>　- One\n　- Two</p>')
+    expect(starkdown('　- One\n　- Two')).toEqual('<p>- One\n　- Two</p>')
   })
 
   test('does not parse incorrect ordered lists', () => {
     expect(starkdown('(1) One\n(2) Two')).toEqual('<p>(1) One\n(2) Two</p>')
   })
 
-  test('Double line break with a non-list node will split up a list', () => {
+  test('Double line break with a non-list node will split up a list - ul', () => {
     expect(starkdown('- One\n\nA\n\n- Two')).toEqual(
       '<ul><li>One</li></ul><p>A</p><ul><li>Two</li></ul>'
     )
+  })
+
+  test('Double line break with a non-list node will split up a list - ol', () => {
     expect(starkdown('1. One\n\nA\n\n2. Two')).toEqual(
       '<ol><li>One</li></ol><p>A</p><ol start="2"><li>Two</li></ol>'
     )
   })
 
-  test('Allows line breaking in lists — treat double line breaks as single in lists', () => {
+  test('Allows line breaking in lists — treat double line breaks as single in lists - ul', () => {
     expect(starkdown('- One\n\n- Two')).toEqual('<ul><li>One</li><li>Two</li></ul>')
+  })
+
+  test('Allows line breaking in lists — treat double line breaks as single in lists - ol', () => {
     expect(starkdown('1. One\n\n2. Two')).toEqual('<ol><li>One</li><li>Two</li></ol>')
   })
 
@@ -68,31 +74,43 @@ describe('lists', () => {
   //   expect(starkdown('1. One\n\n2. Two')).toEqual('<ol class="wide"><li>One</li><li>Two</li></ol>')
   // })
 
-  test('Allows line breaking in lists — default behaviour of single line breaks', () => {
+  test('Allows line breaking in lists — default behaviour of single line breaks - ul', () => {
     expect(starkdown('- One\nA\nB\n- Two')).toEqual('<ul><li>One\nA\nB</li><li>Two</li></ul>')
+  })
+
+  test('Allows line breaking in lists — default behaviour of single line breaks - ol', () => {
     expect(starkdown('1. One\nA\nB\n2. Two')).toEqual('<ol><li>One\nA\nB</li><li>Two</li></ol>')
   })
 
-  test('Allows line breaking in lists — up to 4 leading spaces on new line are ignored', () => {
+  test('Allows line breaking in lists — up to 4 leading spaces on new line are ignored - ul', () => {
     expect(starkdown('- One\n  A\n    B\n- Two')).toEqual('<ul><li>One\nA\nB</li><li>Two</li></ul>')
+  })
+
+  test('Allows line breaking in lists — up to 4 leading spaces on new line are ignored - ol', () => {
     expect(starkdown('1. One\n  A\n    B\n2. Two')).toEqual(
       '<ol><li>One\nA\nB</li><li>Two</li></ol>'
     )
   })
 
-  test('Allows line breaking in lists — Japanese spaces on new line are not ignored', () => {
+  test('Allows line breaking in lists — Japanese spaces on new line are not ignored - ul', () => {
     expect(starkdown('- One\n　　A\n　　B\n- Two')).toEqual(
       '<ul><li>One\n　　A\n　　B</li><li>Two</li></ul>'
     )
+  })
+
+  test('Allows line breaking in lists — Japanese spaces on new line are not ignored - ol', () => {
     expect(starkdown('1. One\n　　A\n　　B\n2. Two')).toEqual(
       '<ol><li>One\n　　A\n　　B</li><li>Two</li></ol>'
     )
   })
 
-  test('Allows line breaking in lists — force <br />', () => {
+  test('Allows line breaking in lists — force <br /> - ul', () => {
     expect(starkdown('- One  \nA  \nB\n- Two')).toEqual(
       '<ul><li>One<br />A<br />B</li><li>Two</li></ul>'
     )
+  })
+
+  test('Allows line breaking in lists — force <br /> - ol', () => {
     expect(starkdown('1. One  \nA  \nB\n2. Two')).toEqual(
       '<ol><li>One<br />A<br />B</li><li>Two</li></ol>'
     )
