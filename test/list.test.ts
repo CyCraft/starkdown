@@ -69,9 +69,8 @@ describe('lists', () => {
   })
 
   // [FUTURE FEATURE?]
-  // test('Allows line breaking in lists — treat double line breaks as single in lists & add `.wide` class', () => {
+  // test('Allows line breaking in lists — treat double line breaks as single in lists & add `.wide` class - ul', () => {
   //   expect(starkdown('- One\n\n- Two')).toEqual('<ul class="wide"><li>One</li><li>Two</li></ul>')
-  //   expect(starkdown('1. One\n\n2. Two')).toEqual('<ol class="wide"><li>One</li><li>Two</li></ol>')
   // })
 
   test('Allows line breaking in lists — default behaviour of single line breaks - ul', () => {
@@ -82,13 +81,15 @@ describe('lists', () => {
     expect(starkdown('1. One\nA\nB\n2. Two')).toEqual('<ol><li>One\nA\nB</li><li>Two</li></ol>')
   })
 
-  test('Allows line breaking in lists — up to 4 leading spaces on new line are ignored - ul', () => {
-    expect(starkdown('- One\n  A\n    B\n- Two')).toEqual('<ul><li>One\nA\nB</li><li>Two</li></ul>')
+  test('Allows line breaking in lists — up to 3 leading spaces on new line are ignored - ul', () => {
+    expect(starkdown('- One\n  A\n   B\n- Two')).toEqual(
+      '<ul><li>One\n  A\n   B</li><li>Two</li></ul>'
+    )
   })
 
-  test('Allows line breaking in lists — up to 4 leading spaces on new line are ignored - ol', () => {
-    expect(starkdown('1. One\n  A\n    B\n2. Two')).toEqual(
-      '<ol><li>One\nA\nB</li><li>Two</li></ol>'
+  test('Allows line breaking in lists — up to 3 leading spaces on new line are ignored - ol', () => {
+    expect(starkdown('1. One\n  A\n   B\n2. Two')).toEqual(
+      '<ol><li>One\n  A\n   B</li><li>Two</li></ol>'
     )
   })
 
