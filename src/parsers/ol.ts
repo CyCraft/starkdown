@@ -5,7 +5,7 @@ const trimItem = (x: string) => x.replace(/^\d+[.)]\s+/, '').trim()
 
 export const ol: ParserDef = {
   name: 'ol',
-  regex: /(?<all>(?:\d+[.)]\s+)[\s\S]+?(?=\n\n\D|$))/,
+  regex: /^(?<all>(?:\n?\d+[.)]\s+)[\s\S]+?(?=\n\n\D|$))/,
   handler: ({ all }, { parseParagraph }) => {
     const parts = all.split(/\n(?=\d)/g)
     const spacedList = parts.some((item) => item.endsWith('\n'))

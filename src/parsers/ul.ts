@@ -3,7 +3,7 @@ import { wrap } from '../utils'
 
 export const ul: ParserDef = {
   name: 'ul',
-  regex: /^(?<all>(?:[*+-]\s+[^$\n]+(?:\n|$))+)/,
+  regex: /^(?<all>(?:\n?[*+-]\s+[^$\n]+(?:\n|$))+)/,
   handler: ({ all }, { parseParagraph }) =>
     wrap(
       'ul',
