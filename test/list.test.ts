@@ -60,13 +60,13 @@ describe('lists', () => {
     )
   })
 
-  // test('Allows line breaking in lists — treat double line breaks as single in lists - ul', () => {
-  //   expect(starkdown('- One\n\n- Two')).toEqual('<ul><li>One</li><li>Two</li></ul>')
-  // })
+  test('Allows line breaking in lists — treat double line breaks as single in lists - ul', () => {
+    expect(starkdown('- One\n\n- Two')).toEqual('<ul><li>One</li><li>Two</li></ul>')
+  })
 
-  // test('Allows line breaking in lists — treat double line breaks as single in lists - ol', () => {
-  //   expect(starkdown('1. One\n\n2. Two')).toEqual('<ol><li>One</li><li>Two</li></ol>')
-  // })
+  test('Allows line breaking in lists — treat double line breaks as single in lists - ol', () => {
+    expect(starkdown('1. One\n\n2. Two')).toEqual('<ol><li>One</li><li>Two</li></ol>')
+  })
 
   // [FUTURE FEATURE?]
   // test('Allows line breaking in lists — treat double line breaks as single in lists & add `.wide` class - ul', () => {
