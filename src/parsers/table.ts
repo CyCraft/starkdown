@@ -20,7 +20,7 @@ export const table: ParserDef = {
     const html = cells.map((row, i) =>
       wrap(
         'tr',
-        row.map((x) => wrap(i === 0 && hasHeading ? 'th' : 'td', parseParagraph(x)))
+        row.map((x) => wrap(i === 0 && hasHeading ? 'th' : 'td', parseParagraph(x)[0]))
       )
     )
     return createParseData(wrap('table', html), index, lastIndex + (tableParse.at(-1)?.[2] ?? 0), {

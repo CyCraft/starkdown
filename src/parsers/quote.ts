@@ -12,6 +12,6 @@ export const quote: ParserDef = {
           .split('\n')
           .map((x) => x.slice(1).trim())
           .join('\n')
-      )
+      )[0]
     ),
 }

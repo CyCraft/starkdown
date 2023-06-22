@@ -1,12 +1,16 @@
-type MaybeArray<T> = T | T[]
+export const REPLACE_NEXT_PARAGRAPH = Symbol('Replace')
 
 export type ParseData = [
-  result: MaybeArray<string>,
+  result: string,
   /** Start index of match */
   startIndex: number,
   /** end index of match, this is useful if your end up parsing more than the tokeniser originally provided */
   stopIndex: number,
-  /** any data you wish to forward can be included here for later parsers to use */
+  /**
+   * any data you wish to forward can be included here for later parsers to use
+   *
+   * If { [REPLACE_NEXT_PARAGRAPH]: true } is returned as part of this data, the previous paragraph will be replaced with the result of this one
+   */
   data?: Record<string | symbol, unknown>
 ]
 
@@ -22,8 +26,10 @@ export type ParserFunction = (
     length: number
     /** index of the last char of match, (equal to index + length) */
     lastIndex: number
+    /** The previous paragraph content BEFORE wrapping in `<p></p>` */
+    nextParagraph: string | undefined
     /** for recursive parsing of tokens */
-    parseParagraph: (str: string) => string
+    parseParagraph: (str: string) => [Result: string, REPLACE_NEXT_PARAGRAPH?: symbol]
     parseNext: (str: string, start: number) => ParseData
     parseIter: (str: string) => IterableIterator<ParseData>
     parse: (str: string) => string

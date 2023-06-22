@@ -6,6 +6,6 @@ export const bis: ParserDef = {
   regex: /(?<t>\*\*?|__?|~~)(?<content>.*?)(?<ns>[^\\\n])\k<t>/,
   handler: ({ t, content, ns }, { parseParagraph }) => {
     const el = t === '~~' ? 's' : t.length === 1 ? 'em' : 'strong'
-    return wrap(el, parseParagraph((content ?? '') + ns))
+    return wrap(el, parseParagraph((content ?? '') + ns)[0])
   },
 }
