@@ -3,10 +3,13 @@ import { wrap } from '../utils'
 
 export const ul: ParserDef = {
   name: 'ul',
-  regex: /^(?<all>(?:[*+-]\s+[^$\n]+(?:\n|$))+)/,
+  regex: /^(?<all>(?:\n?[*+-]\s+[.\n\r\t\S\s]+)+)/,
   handler: ({ all }, { parseParagraph }) =>
     wrap(
       'ul',
-      all.split('\n').map((x) => wrap('li', parseParagraph(x.slice(1).trim())))
+      all
+        .slice(1)
+        .split(/\n[*+-]/g)
+        .map((x) => wrap('li', parseParagraph(x.trim())))
     ),
 }
