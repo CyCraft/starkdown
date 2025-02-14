@@ -1,6 +1,6 @@
 {
   "name": "starkdown",
-  "version": "3.2.9",
+  "version": "4.0.0",
   "description": "Tiny <3kb Markdown parser written, almost as fast and smart as Tony Stark",
   "type": "module",
   "sideEffects": false,
