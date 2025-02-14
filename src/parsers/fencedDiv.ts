@@ -1,8 +1,8 @@
-import type { ParserDef } from '../types'
+import type { ParserDef } from '../types.js'
 
 export const fencedDiv: ParserDef = {
   name: 'fencedDiv',
   regex: /^::: ?(?<cls>[^\n]+)?\n(?<content>[\s\S]+?)\n:::(?:\n|$)/,
   handler: ({ cls, content }, { parse }) =>
-    `<div class="${['fenced', cls ?? ''].join(' ').trim()}">${parse(content)}</div>`,
+    `<div class="${['fenced', cls ?? ''].join(' ').trim()}">${parse(content ?? '')}</div>`,
 }

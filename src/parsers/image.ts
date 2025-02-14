@@ -1,5 +1,5 @@
-import type { ParserDef } from '../types'
-import { attrs } from '../utils'
+import type { ParserDef } from '../types.js'
+import { attrs } from '../utils.js'
 
 export const image: ParserDef = {
   name: 'image',

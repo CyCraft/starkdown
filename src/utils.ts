@@ -1,14 +1,16 @@
-import { ParseData, ParserDef } from './types'
+import { ParseData, ParserDef } from './types.js'
 
 export const createParseData = <T>(
   value: string | string[],
   index: number,
   lastIndex: number,
-  data?: T
+  data?: T,
 ): ParseData => (data ? [value, index, lastIndex, data] : [value, index, lastIndex]) as ParseData
 
-/** Outdent a string based on the first indented line's leading whitespace
- *	@private
+/**
+ * Outdent a string based on the first indented line's leading whitespace
+ *
+ * @private
  */
 export function outdent(str: string, indentValue?: number | string): string {
   let indentStr = ''
@@ -20,32 +22,34 @@ export function outdent(str: string, indentValue?: number | string): string {
 
   return str.replace(matcher, '')
 }
-/** Encode special attribute characters to HTML entities in a String.
- *	@private
+/**
+ * Encode special attribute characters to HTML entities in a String.
+ *
+ * @private
  */
 export function encodeAttr(str: string): string {
   return (str + '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
 
-export const wrap = (
+export function wrap(
   el: string,
   inner: string | string[],
-  attributes?: Record<string, unknown>
-) => {
+  attributes?: { [key in string]: unknown },
+): string {
   const attrString = attributes ? attrs(attributes) : ''
   return `<${el}${attrString}>${Array.isArray(inner) ? inner.join('') : inner}</${el}>`
 }
 
-export const parseAttrList = (str = '') => {
+export function parseAttrList(str = ''): string {
   const rules: string[] = []
   const classes: string[] = []
   let id = ''
   for (const { groups } of str.matchAll(
-    /(?<attr_name>\w+)="(?<attr_val>[^"]+)"|(?:\.(?<cls>[\w-]+))|(?:#(?<id>[\w-]+))/g
+    /(?<attr_name>\w+)="(?<attr_val>[^"]+)"|(?:\.(?<cls>[\w-]+))|(?:#(?<id>[\w-]+))/g,
   )) {
-    if (groups?.id) id = groups.id
-    else if (groups?.cls) classes.push(groups.cls)
-    else rules.push(`${groups?.attr_name}="${groups?.attr_val}"`)
+    if (groups?.['id']) id = groups?.['id']
+    else if (groups?.['cls']) classes.push(groups?.['cls'])
+    else rules.push(`${groups?.['attr_name']}="${groups?.['attr_val']}"`)
   }
 
   const x = [
@@ -63,13 +67,13 @@ export const parseAttrList = (str = '') => {
 export function isInline(tag: string): boolean {
   const tagName = tag.replace(/^<\/?([A-z]+)[> /][.\n\r\t\S\s]*/m, '$1')
   return /^(?:a|abbr|acronym|audio|b|bdi|bdo|big|br|button|canvas|cite|code|data|datalist|del|dfn|em|embed|i|iframe|img|input|ins|kbd|label|map|mark|meter|noscript|object|output|picture|progress|q|ruby|s|samp|script|select|slot|small|span|strong|sub|sup|svg|template|textarea|time|u|tt|var|video|wbr)$/.test(
-    tagName
+    tagName,
   )
 }
 
 export function* until<T>(
   iter: Iterable<T>,
-  fn: (x: T, i: number) => unknown
+  fn: (x: T, i: number) => unknown,
 ): IterableIterator<T> {
   let i = 0
   for (const item of iter) {
@@ -78,7 +82,7 @@ export function* until<T>(
   }
 }
 
-export function attrs(attrs: Record<string, unknown>) {
+export function attrs(attrs: { [key in string]: unknown }): string {
   const result = Object.entries(attrs)
     .filter(([k, v]) => v != null && typeof k != 'symbol')
     .map(([k, v]) => (typeof v === 'boolean' ? k : `${k}="${v}"`))
@@ -87,14 +91,14 @@ export function attrs(attrs: Record<string, unknown>) {
   return result ? ` ${result}` : result
 }
 
-export const compileTokens = (tokens: Map<string, Omit<ParserDef, 'name'>>) => {
+export function compileTokens(tokens: Map<string, Omit<ParserDef, 'name'>>): RegExp {
   const regexParts: string[] = []
   for (const [name, { regex }] of tokens) {
     regexParts.push(
       `(?:${regex.source.replace(/\\k<([^>]+?)>/giu, `\\k<${name}__$1>`)})`.replace(
         /\(\?<((?:[^=!])[^>]*?)>/giu,
-        `(?<${name}__$1>`
-      )
+        `(?<${name}__$1>`,
+      ),
     )
   }
 

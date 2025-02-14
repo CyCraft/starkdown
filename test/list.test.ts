@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { starkdown } from '../src'
+import { starkdown } from '../src/index.js'
 
 describe('lists', () => {
   test('parses an unordered list with *', () => {
@@ -16,7 +16,7 @@ describe('lists', () => {
 
   test('parses an unordered list with mixed bullet point styles', () => {
     expect(starkdown('+ One\n* Two\n- Three')).toEqual(
-      '<ul><li>One</li><li>Two</li><li>Three</li></ul>'
+      '<ul><li>One</li><li>Two</li><li>Three</li></ul>',
     )
   })
 
@@ -30,13 +30,13 @@ describe('lists', () => {
 
   test('parses an ordered list — numbers are all 1', () => {
     expect(starkdown('1. Ordered\n1. Lists\n1. Numbers are ignored')).toEqual(
-      '<ol><li>Ordered</li><li>Lists</li><li>Numbers are ignored</li></ol>'
+      '<ol><li>Ordered</li><li>Lists</li><li>Numbers are ignored</li></ol>',
     )
   })
 
   test('parses an ordered list — start at 5', () => {
     expect(starkdown('5) Ordered\n2) Lists\n4) Numbers are ignored')).toEqual(
-      '<ol start="5"><li>Ordered</li><li>Lists</li><li>Numbers are ignored</li></ol>'
+      '<ol start="5"><li>Ordered</li><li>Lists</li><li>Numbers are ignored</li></ol>',
     )
   })
 
@@ -50,13 +50,13 @@ describe('lists', () => {
 
   test('Double line break with a non-list node will split up a list - ul', () => {
     expect(starkdown('- One\n\nA\n\n- Two')).toEqual(
-      '<ul><li>One</li></ul><p>A</p><ul><li>Two</li></ul>'
+      '<ul><li>One</li></ul><p>A</p><ul><li>Two</li></ul>',
     )
   })
 
   test('Double line break with a non-list node will split up a list - ol', () => {
     expect(starkdown('1. One\n\nA\n\n2. Two')).toEqual(
-      '<ol><li>One</li></ol><p>A</p><ol start="2"><li>Two</li></ol>'
+      '<ol><li>One</li></ol><p>A</p><ol start="2"><li>Two</li></ol>',
     )
   })
 
@@ -83,37 +83,37 @@ describe('lists', () => {
 
   test('Allows line breaking in lists — up to 3 leading spaces on new line are ignored - ul', () => {
     expect(starkdown('- One\n  A\n   B\n- Two')).toEqual(
-      '<ul><li>One\n  A\n   B</li><li>Two</li></ul>'
+      '<ul><li>One\n  A\n   B</li><li>Two</li></ul>',
     )
   })
 
   test('Allows line breaking in lists — up to 3 leading spaces on new line are ignored - ol', () => {
     expect(starkdown('1. One\n  A\n   B\n2. Two')).toEqual(
-      '<ol><li>One\n  A\n   B</li><li>Two</li></ol>'
+      '<ol><li>One\n  A\n   B</li><li>Two</li></ol>',
     )
   })
 
   test('Allows line breaking in lists — Japanese spaces on new line are not ignored - ul', () => {
     expect(starkdown('- One\n　　A\n　　B\n- Two')).toEqual(
-      '<ul><li>One\n　　A\n　　B</li><li>Two</li></ul>'
+      '<ul><li>One\n　　A\n　　B</li><li>Two</li></ul>',
     )
   })
 
   test('Allows line breaking in lists — Japanese spaces on new line are not ignored - ol', () => {
     expect(starkdown('1. One\n　　A\n　　B\n2. Two')).toEqual(
-      '<ol><li>One\n　　A\n　　B</li><li>Two</li></ol>'
+      '<ol><li>One\n　　A\n　　B</li><li>Two</li></ol>',
     )
   })
 
   test('Allows line breaking in lists — force <br /> - ul', () => {
     expect(starkdown('- One  \nA  \nB\n- Two')).toEqual(
-      '<ul><li>One<br />A<br />B</li><li>Two</li></ul>'
+      '<ul><li>One<br />A<br />B</li><li>Two</li></ul>',
     )
   })
 
   test('Allows line breaking in lists — force <br /> - ol', () => {
     expect(starkdown('1. One  \nA  \nB\n2. Two')).toEqual(
-      '<ol><li>One<br />A<br />B</li><li>Two</li></ol>'
+      '<ol><li>One<br />A<br />B</li><li>Two</li></ol>',
     )
   })
 

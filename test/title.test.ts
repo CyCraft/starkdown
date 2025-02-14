@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { starkdown } from '../src'
+import { starkdown } from '../src/index.js'
 
 describe('titles', () => {
   test('parses H1 titles', () => {

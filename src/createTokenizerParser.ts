@@ -1,17 +1,22 @@
-import type { ParseData, ParserDef } from './types'
-import { compileTokens, createParseData, isInline } from './utils'
+import type { ParseData, ParserDef } from './types.js'
+import { compileTokens, createParseData, isInline } from './utils.js'
 
 /**
  * @example
- * export function markdown(md: string): string {
- *   if (!md) return `<p></p>`
- *   const plugins = [...defaultParsers, myCustomPlugin]
- *   const { parse } = createTokenizerParser(plugins)
- *   return parse(md)
- * }
+ *   export function markdown(md: string): string {
+ *     if (!md) return `<p></p>`
+ *     const plugins = [...defaultParsers, myCustomPlugin]
+ *     const { parse } = createTokenizerParser(plugins)
+ *     return parse(md)
+ *   }
  */
-export function createTokenizerParser(parsers: ParserDef[]) {
-  const tokens: Map<string, ParserDef> = new Map(parsers.map((x) => [x.name, x]))
+export function createTokenizerParser(parsers: ParserDef[]): {
+  parse: (md: string) => string
+  parseIter: (str: string) => IterableIterator<ParseData>
+  parseNext: (src: string, startIndex: number) => ParseData
+  parseParagraph: (md: string) => string
+} {
+  const tokens = new Map<string, ParserDef>(parsers.map((x) => [x.name, x]))
   const tokenizer = compileTokens(tokens)
 
   function* parseIter(str: string): IterableIterator<ParseData> {
@@ -44,8 +49,8 @@ export function createTokenizerParser(parsers: ParserDef[]) {
     const groups = Object.fromEntries(nonEmptyGroups.map(([k, v]) => [k.split('__')[1], v]))
 
     const lastIndex = startIndex + index + length
-    const [name] = nonEmptyGroups[0][0].split('__')
-    const { handler } = tokens.get(name) as ParserDef
+    const [name] = nonEmptyGroups[0]?.[0].split('__') ?? []
+    const { handler } = tokens.get(name ?? '') as ParserDef
     const value = handler(groups, {
       index: startIndex + index,
       src,
@@ -98,7 +103,7 @@ export function createTokenizerParser(parsers: ParserDef[]) {
 
     let i = restitchedFencedBlocks.length
     while (i--) {
-      const part = restitchedFencedBlocks[i]
+      const part = restitchedFencedBlocks[i] ?? ''
       const p = parseParagraph(part)
       result = (p && (!p.startsWith('<') || isInline(p)) ? `<p>${p.trim()}</p>` : p) + result
     }

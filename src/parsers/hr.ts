@@ -1,4 +1,4 @@
-import type { ParserDef } from '../types'
+import type { ParserDef } from '../types.js'
 
 export const hr: ParserDef = {
   name: 'hr',

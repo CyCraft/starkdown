@@ -1,5 +1,5 @@
-import type { ParserDef } from '../types'
-import { encodeAttr, outdent } from '../utils'
+import type { ParserDef } from '../types.js'
+import { encodeAttr, outdent } from '../utils.js'
 
 export const codeblock: ParserDef = {
   name: 'codeblock',
@@ -7,5 +7,5 @@ export const codeblock: ParserDef = {
   handler: ({ lang, str }) =>
     `<pre class="code ${lang ?? ''}"><code${
       lang ? ` class="language-${lang.toLowerCase()}"` : ''
-    }>${outdent(encodeAttr(str).replace(/(?:^\n+|\n+$)/g, ''))}</code></pre>`,
+    }>${outdent(encodeAttr(str ?? '').replace(/(?:^\n+|\n+$)/g, ''))}</code></pre>`,
 }

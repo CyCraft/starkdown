@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { starkdown } from '../src'
+import { starkdown } from '../src/index.js'
 
 describe('<hr />', () => {
   test('should parse ---', () => {
@@ -18,7 +18,7 @@ describe('<hr />', () => {
 
   test('should parse * * * in a >', () => {
     expect(starkdown('> foo\n\n* * *\n\nbar')).toEqual(
-      '<blockquote>foo</blockquote><hr /><p>bar</p>'
+      '<blockquote>foo</blockquote><hr /><p>bar</p>',
     )
   })
 })

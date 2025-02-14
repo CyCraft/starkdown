@@ -16,7 +16,7 @@ import {
   table,
   ul,
   underlineHeading,
-} from './parsers/index'
+} from './parsers/index.js'
 
 export const defaultParsers = [
   escape, // must always come first

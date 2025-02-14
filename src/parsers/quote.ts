@@ -1,5 +1,5 @@
-import type { ParserDef } from '../types'
-import { wrap } from '../utils'
+import type { ParserDef } from '../types.js'
+import { wrap } from '../utils.js'
 
 export const quote: ParserDef = {
   name: 'quote',
@@ -9,9 +9,9 @@ export const quote: ParserDef = {
       'blockquote',
       parseParagraph(
         all
-          .split('\n')
+          ?.split('\n')
           .map((x) => x.slice(1).trim())
-          .join('\n')
-      )
+          .join('\n') ?? '',
+      ),
     ),
 }

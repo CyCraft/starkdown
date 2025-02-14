@@ -1,5 +1,5 @@
-import type { ParserDef } from '../types'
-import { wrap } from '../utils'
+import type { ParserDef } from '../types.js'
+import { wrap } from '../utils.js'
 
 export const ul: ParserDef = {
   name: 'ul',
@@ -8,8 +8,8 @@ export const ul: ParserDef = {
     wrap(
       'ul',
       all
-        .slice(1)
+        ?.slice(1)
         .split(/\n[*+-]/g)
-        .map((x) => wrap('li', parseParagraph(x.trim())))
+        .map((x) => wrap('li', parseParagraph(x.trim()))) ?? '',
     ),
 }
