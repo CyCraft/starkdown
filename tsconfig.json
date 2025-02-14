@@ -1,14 +1,7 @@
 {
+  "extends": "@cycraft/tsconfig",
+  "include": ["src"],
   "compilerOptions": {
-    "baseUrl": ".",
-    "module": "esnext",
-    "target": "ESNext",
-    "lib": ["esnext", "DOM"],
-    "strict": true,
-    "moduleResolution": "node",
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true
-  },
-  "include": ["src/**/*", "test/**/*"]
+    "outDir": "dist"
+  }
 }
