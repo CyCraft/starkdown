@@ -1,4 +1,4 @@
-import type { ParseData, ParserDef } from './types'
+import { REPLACE_NEXT_PARAGRAPH, type ParseData, type ParserDef } from './types'
 import { compileTokens, createParseData, isInline } from './utils'
 
 /**
@@ -14,19 +14,19 @@ export function createTokenizerParser(parsers: ParserDef[]) {
   const tokens: Map<string, ParserDef> = new Map(parsers.map((x) => [x.name, x]))
   const tokenizer = compileTokens(tokens)
 
-  function* parseIter(str: string): IterableIterator<ParseData> {
+  function* parseIter(str: string, nextParagraph?: string): IterableIterator<ParseData> {
     let i = 0
     while (i < str.length) {
-      const val = parseNext(str, i)
-      if (val[1] !== i) {
-        yield createParseData(str.slice(i, val[1]), i, val[1])
+      const parsedData = parseNext(str, i, nextParagraph)
+      if (parsedData[1] !== i) {
+        yield createParseData(str.slice(i, parsedData[1]), i, parsedData[1])
       }
-      i = val[2]
-      yield val
+      i = parsedData[2]
+      yield parsedData
     }
   }
 
-  function parseNext(src: string, startIndex: number): ParseData {
+  function parseNext(src: string, startIndex: number, nextParagraph?: string): ParseData {
     tokenizer.lastIndex = -1
     const match = tokenizer.exec(src.slice(startIndex))
 
@@ -51,6 +51,7 @@ export function createTokenizerParser(parsers: ParserDef[]) {
       src,
       length,
       lastIndex,
+      nextParagraph,
       ...tokenizerResult,
     })
 
@@ -60,11 +61,16 @@ export function createTokenizerParser(parsers: ParserDef[]) {
   }
 
   /** Parse a single Markdown paragraph into an HTML String. */
-  function parseParagraph(md: string): string {
-    return [...parseIter(md)]
-      .map(([x]) => x)
-      .flat(Infinity)
-      .join('')
+  function parseParagraph(
+    md: string,
+    nextParagraph?: string
+  ): [Result: string, REPLACE_NEXT_PARAGRAPH?: symbol] {
+    const results = [...parseIter(md, nextParagraph)]
+    const paragraphContent = results.map(([x]) => x).join('')
+    const lastResult = results[results.length - 1]
+    return lastResult[3]?.[REPLACE_NEXT_PARAGRAPH]
+      ? [paragraphContent, REPLACE_NEXT_PARAGRAPH]
+      : [paragraphContent]
   }
 
   /** Parse Markdown into an HTML String. */
@@ -97,9 +103,19 @@ export function createTokenizerParser(parsers: ParserDef[]) {
     }, [])
 
     let i = restitchedFencedBlocks.length
+    /** The previous paragraph content BEFORE wrapping in `<p></p>` */
+    let nextParagraph: string | undefined = undefined
     while (i--) {
       const part = restitchedFencedBlocks[i]
-      const p = parseParagraph(part)
+      const [p, replaceSymbol] = parseParagraph(part, nextParagraph)
+      if (
+        replaceSymbol === REPLACE_NEXT_PARAGRAPH &&
+        nextParagraph &&
+        result.endsWith(nextParagraph)
+      ) {
+        result = result.slice(0, -nextParagraph.length)
+      }
+      nextParagraph = p
       result = (p && (!p.startsWith('<') || isInline(p)) ? `<p>${p.trim()}</p>` : p) + result
     }
     return result.trim()

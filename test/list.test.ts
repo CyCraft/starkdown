@@ -60,13 +60,13 @@ describe('lists', () => {
     )
   })
 
-  // test('Allows line breaking in lists — treat double line breaks as single in lists - ul', () => {
-  //   expect(starkdown('- One\n\n- Two')).toEqual('<ul><li>One</li><li>Two</li></ul>')
-  // })
+  test('Allows line breaking in lists — treat double line breaks as single in lists - ul', () => {
+    expect(starkdown('- One\n\n- Two')).toEqual('<ul><li>One</li><li>Two</li></ul>')
+  })
 
-  // test('Allows line breaking in lists — treat double line breaks as single in lists - ol', () => {
-  //   expect(starkdown('1. One\n\n2. Two')).toEqual('<ol><li>One</li><li>Two</li></ol>')
-  // })
+  test('Allows line breaking in lists — treat double line breaks as single in lists - ol', () => {
+    expect(starkdown('1. One\n\n2. Two')).toEqual('<ol><li>One</li><li>Two</li></ol>')
+  })
 
   // [FUTURE FEATURE?]
   // test('Allows line breaking in lists — treat double line breaks as single in lists & add `.wide` class - ul', () => {
@@ -116,12 +116,4 @@ describe('lists', () => {
       '<ol><li>One<br />A<br />B</li><li>Two</li></ol>'
     )
   })
-
-  // Due to the way that we're dealing with newlines and paragraphs, this doesn't work at the moment but
-  // keeping this here to make sure that we can just uncomment it in the future
-  // test.only('parses an ordered list and adds paragraphs inbetween them if double spaced', () => {
-  //   expect(starkdown('1) Ordered\n2) Lists\n\n4) Numbers are ignored')).toEqual(
-  //     '<ol><li><p>Ordered<p></li><li><p>Lists<p></li><li><p>Numbers are ignored<p></li></ol>'
-  //   )
-  // })
 })
