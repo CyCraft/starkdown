@@ -208,7 +208,9 @@ const html = starkdown(str)
 
 // this is a quick way to parse the string without the table tokeniser
 // however, even though the parser is not used, it will not get tree-shaked
-const htmlWithoutTables = starkdown(str, { plugins: defaultParsers.filter((x) => x.name !== 'table') })
+const htmlWithoutTables = starkdown(str, {
+  plugins: defaultParsers.filter((x) => x.name !== 'table'),
+})
 ```
 
 You can also add your own parsers this way. See [#Custom Parsers](#custom-parsers) below.
