@@ -24,11 +24,11 @@
   "devDependencies": {
     "@cycraft/eslint": "^0.4.3",
     "@cycraft/tsconfig": "^0.1.2",
-    "@vitest/ui": "^3.0.5",
+    "@vitest/ui": "^3.0.6",
     "del-cli": "^6.0.0",
     "np": "^10.2.0",
     "typedoc": "^0.27.7",
-    "vitest": "^3.0.5"
+    "vitest": "^3.0.6"
   },
   "files": [
     "dist"
