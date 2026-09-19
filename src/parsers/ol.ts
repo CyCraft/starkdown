@@ -1,7 +1,9 @@
 import type { ParserDef } from '../types.js'
 import { wrap } from '../utils.js'
 
-const trimItem = (x: string): string => x.replace(/^\d+[.)]\s+/, '').trim()
+function trimItem(x: string): string {
+  return x.replace(/^\d+[.)]\s+/, '').trim()
+}
 
 export const ol: ParserDef = {
   name: 'ol',
