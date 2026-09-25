@@ -27,7 +27,10 @@
     "@vitest/ui": "^5.0.2",
     "bumpp": "^12.3.0",
     "del-cli": "^7.0.0",
+    "eslint": "^9.20.1",
+    "prettier": "^3.9.9",
     "typedoc": "^0.28.20",
+    "typescript": "^5.9.3",
     "vitest": "^5.0.2"
   },
   "files": [
