@@ -19,7 +19,7 @@
     "test:ui": "vitest --ui",
     "test:watch": "vitest",
     "prettier:fix-all": "prettier --write \"{src,test}/**/*.ts\" \"*.{md,json}\"",
-    "release": "pnpm run lint && pnpm run build && pnpm test && bumpp --no-push && pnpm publish --no-git-checks && pnpm dlx jsr publish ${JSR_TOKEN:+--token $JSR_TOKEN} && git push --follow-tags && gh release create $(git describe --tags --abbrev=0) --generate-notes --notes \"$(git log --pretty='- %s  %h' $(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD~1)\""
+    "release": "pnpm run lint && pnpm run build && pnpm test && bumpp --no-push && pnpm publish --no-git-checks && jsr publish ${JSR_TOKEN:+--token $JSR_TOKEN} && git push --follow-tags && gh release create $(git describe --tags --abbrev=0) --generate-notes --notes \"$(git log --pretty='- %s  %h' $(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD~1)\""
   },
   "devDependencies": {
     "@cycraft/eslint": "^0.4.11",
@@ -28,6 +28,7 @@
     "bumpp": "^12.3.0",
     "del-cli": "^7.0.0",
     "eslint": "^9.20.1",
+    "jsr": "^0.14.3",
     "prettier": "^3.9.9",
     "typedoc": "^0.28.20",
     "typescript": "^5.9.3",
